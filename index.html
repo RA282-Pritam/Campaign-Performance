@@ -36,7 +36,7 @@
             border-radius: 10px; 
             border: 1px solid var(--border-color); 
             box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
-            overflow: hidden; /* For header background to fit */
+            overflow: hidden; 
             display: flex;
             flex-direction: column;
         }
@@ -75,7 +75,7 @@
             box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
         }
 
-        /* TABLE STYLING - FULLY BORDERED */
+        /* TABLE STYLING */
         .table-container { background: #fff; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; }
         
         table.dataTable { border-collapse: collapse !important; border: 1px solid var(--border-color) !important; width: 100% !important; }
@@ -105,6 +105,10 @@
         .qual-none { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
 
         .dataTables_filter input { border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 15px; font-size: 12px; width: 250px; outline: none; margin-right: 15px; }
+
+        /* CAMPAIGN LINK STYLE */
+        .campaign-link { color: var(--brand-blue); font-weight: 700; text-decoration: none; border-bottom: 1px solid transparent; }
+        .campaign-link:hover { border-bottom: 1px solid var(--brand-blue); }
     </style>
 </head>
 <body>
@@ -121,7 +125,7 @@
         </div>
     </div>
 
-    <!-- 4 BOX SLICER GRID (Styled like table) -->
+    <!-- 4 BOX SLICER GRID -->
     <div class="slicer-grid">
         <div class="slicer-card">
             <div class="slicer-header">Platform Filter</div>
@@ -169,6 +173,14 @@ $(document).ready(function() {
         "pageLength": 15,
         "language": { "search": "", "searchPlaceholder": "Quick Search..." },
         "createdRow": function(row, data) {
+            
+            // --- CAMPAIGN ID LINK LOGIC ---
+            if (data[1]) {
+                const campaignId = data[1];
+                const link = `https://leadmanager.automateleads.ai/page/campaign-details/${campaignId}`;
+                $('td:eq(1)', row).html(`<a href="${link}" target="_blank" class="campaign-link">${campaignId}</a>`);
+            }
+
             // CPL Status Badges
             if (data[5]) {
                 let s = data[5].toString().toUpperCase();
