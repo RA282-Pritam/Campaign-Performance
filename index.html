@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketing Dashboard | Premium Theme</title>
+    <title>Marketing Dashboard | Spending Analysis</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
@@ -14,72 +14,99 @@
             --brand-blue: #2563eb; 
             --dark-header: #334155; 
             --border-color: #cbd5e1; 
+            --whatsapp-green: #22c55e;
         }
         
-        body { background-color: var(--bg-body); font-family: 'Inter', sans-serif; padding: 20px; color: #1e293b; }
+        body { background-color: var(--bg-body); font-family: 'Inter', sans-serif; padding: 10px; color: #1e293b; overflow-x: hidden; }
         
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: #fff; padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .top-bar h4 { font-weight: 800; font-size: 18px; color: var(--dark-header); margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #fff; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .top-bar h4 { font-weight: 800; font-size: 14px; color: var(--dark-header); margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .action-group { display: flex; gap: 10px; align-items: center; }
-        .upload-card { background: #f8fafc; padding: 5px 12px; border-radius: 8px; border: 1px dashed var(--brand-blue); display: flex; align-items: center; gap: 8px; }
-        
-        .btn-clear { background: #fff; border: 1px solid #fecaca; color: #dc2626; font-size: 11px; padding: 8px 15px; border-radius: 8px; font-weight: 600; transition: 0.2s; }
-        .btn-clear:hover { background: #fee2e2; }
+        .action-group { display: flex; gap: 8px; align-items: center; }
+        .upload-card { background: #f8fafc; padding: 2px 8px; border-radius: 4px; border: 1px dashed var(--brand-blue); }
+        .btn-clear { background: #fff; border: 1px solid #fecaca; color: #dc2626; font-size: 9px; padding: 4px 10px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
 
-        /* SLICER GRID - Changed to 3 columns to accommodate 6 filters nicely */
-        .slicer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
-        
-        .slicer-card { 
-            background: #fff; 
-            border-radius: 10px; 
-            border: 1px solid var(--border-color); 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
-            overflow: hidden; 
-            display: flex;
-            flex-direction: column;
-        }
-
-        .slicer-header { 
-            background: var(--dark-header); 
+        .btn-whatsapp-small { 
+            background: var(--whatsapp-green); 
+            border: 1px solid #16a34a; 
             color: #fff; 
-            font-size: 10px; 
+            font-size: 9px; 
+            padding: 4px 10px; 
+            border-radius: 4px; 
             font-weight: 700; 
-            text-transform: uppercase; 
-            padding: 10px 15px; 
-            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
+        .btn-whatsapp-small:hover { background: #16a34a; color: #fff; }
 
-        .slicer-body { padding: 12px; display: flex; flex-wrap: wrap; gap: 6px; max-height: 120px; overflow-y: auto; }
+        .slicer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
+        .slicer-card { background: #fff; border-radius: 6px; border: 1px solid var(--border-color); overflow: hidden; display: flex; flex-direction: column; min-height: 110px; }
+        .slicer-header { background: var(--dark-header); color: #fff; font-size: 8.5px; font-weight: 700; text-transform: uppercase; padding: 5px 10px; }
         
-        .btn-slicer { 
-            border: 1px solid #e2e8f0; 
-            background: #f8fafc; 
-            font-size: 10px; 
-            padding: 4px 12px; 
-            border-radius: 50px; 
-            color: #475569; 
-            font-weight: 600; 
-            transition: 0.2s; 
-        }
-        
-        .btn-slicer:hover { border-color: var(--brand-blue); background: #fff; color: var(--brand-blue); }
+        .slicer-body { padding: 6px; display: flex; flex-wrap: wrap; gap: 4px; max-height: 85px; overflow-y: auto; flex-grow: 1; }
+        .summary-body { padding: 8px 10px; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+
+        .slicer-select { width: 100%; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 10px; padding: 4px; border-radius: 4px; font-weight: 600; color: #475569; outline: none; }
+        .btn-slicer { border: 1px solid #e2e8f0; background: #f8fafc; font-size: 9px; padding: 2px 8px; border-radius: 3px; color: #475569; font-weight: 600; transition: all 0.2s; }
+        .btn-slicer:hover { background: #f1f5f9; }
         .btn-slicer.active { background: var(--brand-blue) !important; color: #fff !important; border-color: var(--brand-blue) !important; }
 
-        /* TABLE STYLING */
-        .table-container { background: #fff; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; }
-        table.dataTable { border-collapse: collapse !important; width: 100% !important; }
-        table.dataTable thead th { background: var(--dark-header) !important; color: #fff !important; font-size: 10px; padding: 12px !important; border: 1px solid #475569 !important; }
-        table.dataTable tbody td { padding: 10px 12px !important; font-size: 11px; border: 1px solid var(--border-color) !important; color: #334155; }
-        
-        /* STATUS BADGES */
-        .badge-pill { padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 800; display: inline-block; text-align: center; min-width: 80px; text-transform: uppercase; }
+        .summary-matrix { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+        .summary-row { display: flex; width: 100%; gap: 10px; }
+        .sum-item { flex: 1; border-left: 2px solid #e2e8f0; padding-left: 6px; }
+        .sum-label { font-size: 7px; color: #64748b; font-weight: 700; text-transform: uppercase; display: block; line-height: 1; margin-bottom: 2px; }
+        .sum-val { font-size: 10.5px; font-weight: 800; color: #0f172a; display: block; line-height: 1.1; }
+
+        .table-container { 
+            background: #fff; border-radius: 6px; border: 1px solid var(--border-color); height: 560px; overflow: auto; position: relative;
+        }
+
+        table.dataTable { 
+            table-layout: fixed !important; border-collapse: separate !important; border-spacing: 0 !important; width: 1750px !important; margin: 0 !important; 
+        }
+
+        table.dataTable thead th { 
+            position: sticky !important; top: 0 !important; z-index: 1020 !important; background-color: var(--dark-header) !important; color: #fff !important; font-size: 9px; padding: 4px 2px !important; border-bottom: 2px solid #1e293b !important; border-right: 1px solid #475569 !important; white-space: normal !important; word-wrap: break-word !important; line-height: 1.2 !important; vertical-align: middle; text-align: center;
+        }
+
+        table.dataTable tbody td { padding: 4px 8px !important; font-size: 10px; border: 1px solid #f1f5f9 !important; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
+        .dt-center { text-align: center !important; }
+
+        /* Frozen Columns 1 to 6 */
+        table.dataTable thead th:nth-child(1), table.dataTable tbody td:nth-child(1) { position: sticky !important; left: 0; z-index: 1010; }
+        table.dataTable thead th:nth-child(2), table.dataTable tbody td:nth-child(2) { position: sticky !important; left: 35px; z-index: 1010; }
+        table.dataTable thead th:nth-child(3), table.dataTable tbody td:nth-child(3) { position: sticky !important; left: 75px; z-index: 1010; }
+        table.dataTable thead th:nth-child(4), table.dataTable tbody td:nth-child(4) { position: sticky !important; left: 140px; z-index: 1010; }
+        table.dataTable thead th:nth-child(5), table.dataTable tbody td:nth-child(5) { position: sticky !important; left: 270px; z-index: 1010; }
+        table.dataTable thead th:nth-child(6), table.dataTable tbody td:nth-child(6) { position: sticky !important; left: 400px; z-index: 1010; }
+
+        table.dataTable thead th:nth-child(-n+6) { z-index: 1030 !important; }
+        table.dataTable tbody td:nth-child(-n+6) { background-color: #fff !important; }
+        table.dataTable tbody tr:hover td:nth-child(-n+6) { background-color: #f8fafc !important; }
+
+        .badge-pill { padding: 2px 4px; border-radius: 3px; font-size: 8px; font-weight: 700; display: inline-block; text-align: center; min-width: 60px; text-transform: uppercase; }
         .status-ok { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
         .status-high { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
         .qual-good { background: #166534; color: #fff; }
         .qual-ok { background: #dcfce7; color: #166534; }
         .qual-low { background: #ef4444; color: #fff; }
+        
+        .analysis-over { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .analysis-under { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .analysis-matched { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+
+        .dot { height: 7px; width: 7px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+        .dot-red { background-color: #ef4444; box-shadow: 0 0 4px #ef4444; animation: blinker 1s linear infinite; }
+        .dot-green { background-color: #22c55e; }
+        .dot-blue { background-color: #3b82f6; }
+        @keyframes blinker { 50% { opacity: 0; } }
+
         .campaign-link { color: var(--brand-blue); font-weight: 700; text-decoration: none; }
+        .dataTables_paginate, .dataTables_length, .dataTables_info { display: none !important; }
+        ::-webkit-scrollbar { width: 5px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -88,48 +115,63 @@
     <div class="top-bar">
         <h4>AURUM ANALYTICA DASHBOARD</h4>
         <div class="action-group">
-            <button class="btn-clear" onclick="clearData()">🗑 CLEAR DATA</button>
+            <button class="btn-whatsapp-small" onclick="captureAndSendTable()" title="Copy Full Table Photo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 4px;">
+                    <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+                </svg>
+                WP SEND
+            </button>
+            <button class="btn-clear" onclick="clearData()">🗑 CLEAR</button>
             <div class="upload-card">
-                <input type="file" id="excelUpload" class="form-control form-control-sm" accept=".xlsx, .xls, .csv" style="width: 180px;">
+                <input type="file" id="excelUpload" class="form-control form-control-sm" accept=".xlsx, .xls, .csv" style="width: 140px; font-size: 9px; height: 24px;">
             </div>
         </div>
     </div>
 
-    <!-- 6 BOX SLICER GRID -->
     <div class="slicer-grid">
         <div class="slicer-card">
-            <div class="slicer-header">1. TL Name (Filter)</div>
-            <div id="filter-tl" class="slicer-body"></div>
+            <div class="slicer-header">TL & Assigned User (FOS)</div>
+            <div class="slicer-body" style="flex-direction: column; gap: 4px; overflow: hidden;">
+                <select id="select-tl" class="slicer-select" onchange="handleTLChange(this.value)">
+                    <option value="">All Team Leaders</option>
+                </select>
+                <select id="select-user" class="slicer-select" onchange="applySlicerFilter(21, this.value)">
+                    <option value="">All Users (FOS)</option>
+                </select>
+            </div>
         </div>
-        <div class="slicer-card">
-            <div class="slicer-header">2. Assigned User (FOS)</div>
-            <div id="filter-user" class="slicer-body"></div>
-        </div>
-        <div class="slicer-card">
-            <div class="slicer-header">Platform</div>
-            <div id="filter-platform" class="slicer-body"></div>
-        </div>
-        <div class="slicer-card">
-            <div class="slicer-header">CPL Status</div>
-            <div id="filter-cpl" class="slicer-body"></div>
-        </div>
-        <div class="slicer-card">
-            <div class="slicer-header">Qual Status</div>
-            <div id="filter-qual" class="slicer-body"></div>
-        </div>
-        <div class="slicer-card">
-            <div class="slicer-header">Spent Type</div>
-            <div id="filter-spent" class="slicer-body"></div>
+        <div class="slicer-card"><div class="slicer-header">Platform</div><div id="filter-platform" class="slicer-body"></div></div>
+        <div class="slicer-card"><div class="slicer-header">CPL Status</div><div id="filter-cpl" class="slicer-body"></div></div>
+        <div class="slicer-card"><div class="slicer-header">Qual Status</div><div id="filter-qual" class="slicer-body"></div></div>
+        <div class="slicer-card"><div class="slicer-header">Spent Type</div><div id="filter-spent" class="slicer-body"></div></div>
+        
+        <div class="slicer-card" style="border-color: #cbd5e1; background: #fafafa;">
+            <div class="slicer-header" style="background: #1e293b;">Live Summary (Filtered View)</div>
+            <div class="summary-body">
+                <div class="summary-matrix">
+                    <div class="summary-row">
+                        <div class="sum-item"><span class="sum-label">Campaigns</span><span id="sum-camp" class="sum-val">0</span></div>
+                        <div class="sum-item"><span class="sum-label">Clients</span><span id="sum-client" class="sum-val">0</span></div>
+                        <div class="sum-item"><span class="sum-label">Projects</span><span id="sum-proj" class="sum-val">0</span></div>
+                    </div>
+                    <div class="summary-row">
+                        <div class="sum-item" style="border-left-color: #94a3b8;"><span class="sum-label">Tot Budget</span><span id="sum-budget" class="sum-val">₹0</span></div>
+                        <div class="sum-item" style="border-left-color: #3b82f6;"><span class="sum-label">Tot Spent</span><span id="sum-spent" class="sum-val" style="color:#2563eb">₹0</span></div>
+                    </div>
+                    <div class="summary-row">
+                        <div class="sum-item" style="border-left-color: #94a3b8;"><span class="sum-label">Target Leads</span><span id="sum-target" class="sum-val">0</span></div>
+                        <div class="sum-item" style="border-left-color: #10b981;"><span class="sum-label">Delivered Leads</span><span id="sum-delivered" class="sum-val">0</span></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="table-container">
-        <div class="table-responsive">
-            <table id="campaignTable" class="table table-striped w-100">
-                <thead id="tableHead"></thead>
-                <tbody id="tableBody"></tbody>
-            </table>
-        </div>
+        <table id="campaignTable" class="table table-striped">
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody"></tbody>
+        </table>
     </div>
 </div>
 
@@ -137,42 +179,200 @@
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
 let table;
 let masterData = [];
-let tlUserMap = {}; // Logic for Dependent Dropdown
+let activeFilters = { 5:'', 17:'', 18:'', 20:'', 21:'', 22:'' };
 
-const targetHeaders = ["DRR", "CAMPAIGN", "CLIENT NAME", "PROJECT NAME", "PLATFORM", "CPL STATUS", "QUALIFICATION STATUS", "CREDIT ASSIGNED", "TOTAL CREDIT SPENT", "CREDIT ASSIGNED FOR", "LEADS DELIVERED", "PENDING LEADS", "FEEDBACK RECEIVED", "LEADS QUALIFIED", "TARGET CPL", "CURRENT CPL", "QUALIFICAITON", "SPENT TYPE", "ASSIGNED USER", "TL NAME"];
+const targetHeaders = ["S. NO", "DRR", "CAMPAIGN", "CLIENT NAME", "PROJECT NAME", "PLATFORM", "CREDIT ASSIGNED", "TOTAL CREDIT SPENT", "SHOULD WE HAVE SPENT", "CREDIT ASSIGNED FOR", "LEADS DELIVERED", "PENDING LEADS", "FEEDBACK RECEIVED", "LEADS QUALIFIED", "TARGET CPL", "CURRENT CPL", "QUALIFICAITON", "CPL STATUS", "QUALIFICATION STATUS", "SPENDING ANALYSIS", "SPENT TYPE", "ASSIGNED USER", "TL NAME"];
 
 $(document).ready(function() {
     $('#tableHead').html("<tr>" + targetHeaders.map(h => `<th>${h}</th>`).join('') + "</tr>");
     
     table = $('#campaignTable').DataTable({
-        "dom": 'frtip', 
-        "pageLength": 15,
-        "language": { "search": "", "searchPlaceholder": "Quick Search..." },
+        "dom": 'frti',
+        "paging": false,
+        "ordering": true,
+        "info": false,
+        "autoWidth": false,
+        "language": { "search": "", "searchPlaceholder": "Search..." },
+        "columnDefs": [
+            { "targets": [20, 21, 22], "visible": false }, 
+            { "targets": 0, "width": "35px" },
+            { "targets": 1, "width": "40px" },
+            { "targets": 2, "width": "65px" },
+            { "targets": 3, "width": "130px" },
+            { "targets": 4, "width": "130px" },
+            { "targets": 5, "width": "100px" },
+            { "targets": [6, 10, 11, 13, 14, 15], "className": "dt-center", "width": "60px" },
+            { "targets": [7, 8, 9, 12, 16, 17, 18], "className": "dt-center", "width": "85px" },
+            { 
+                "targets": 19, 
+                "width": "75px", 
+                "className": "dt-center",
+                "render": function(data, type, row) {
+                    let spent = parseFloat(row[7]) || 0;
+                    let should = parseFloat(row[8]) || 0;
+                    let status = spent > should ? "OVERSPENT" : (spent < should ? "UNDERSPENT" : "MATCHED");
+                    let badgeClass = spent > should ? "analysis-over" : (spent < should ? "analysis-under" : "analysis-matched");
+                    let dotClass = spent > should ? "dot-red" : (spent < should ? "dot-green" : "dot-blue");
+
+                    if (type === 'display') {
+                        return `<span class="badge-pill ${badgeClass}"><span class="dot ${dotClass}"></span>${status}</span>`;
+                    }
+                    return status;
+                }
+            }
+        ],
         "createdRow": function(row, data) {
-            if (data[1]) {
-                const link = `https://leadmanager.automateleads.ai/page/campaign-details/${data[1]}`;
-                $('td:eq(1)', row).html(`<a href="${link}" target="_blank" class="campaign-link">${data[1]}</a>`);
+            $('td', row).each(function() { $(this).attr('title', $(this).text()); });
+
+            if (data[2]) {
+                const link = `https://leadmanager.automateleads.ai/page/campaign-details/${data[2]}`;
+                $('td:eq(2)', row).html(`<a href="${link}" target="_blank" class="campaign-link">${data[2]}</a>`);
             }
-            if (data[5]) {
-                let s = data[5].toString().toUpperCase();
-                if (s.includes("OK")) $('td:eq(5)', row).html(`<span class="badge-pill status-ok">${s}</span>`);
-                else if (s.includes("HIGH")) $('td:eq(5)', row).html(`<span class="badge-pill status-high">${s}</span>`);
+            
+            [6, 7, 8, 14, 15].forEach(idx => {
+                if (data[idx] !== undefined && data[idx] !== null && data[idx] !== "") {
+                    let val = parseFloat(data[idx]);
+                    if (!isNaN(val)) {
+                        let formatted = "₹" + Math.round(val).toLocaleString('en-IN');
+                        $('td:eq('+idx+')', row).html(`<span style="font-weight:700;">${formatted}</span>`);
+                    }
+                }
+            });
+
+            if (data[16] !== undefined && data[16] !== null && data[16] !== "") {
+                let val = parseFloat(data[16]);
+                if (!isNaN(val)) {
+                    let formatted = (val * 100).toFixed(2) + "%";
+                    $('td:eq(16)', row).html(`<span style="font-weight:700;">${formatted}</span>`);
+                }
             }
-            if (data[6]) {
-                let q = data[6].toString().toUpperCase();
+
+            if (data[17]) {
+                let s = data[17].toString().toUpperCase();
+                if (s.includes("OK")) $('td:eq(17)', row).html(`<span class="badge-pill status-ok">${s}</span>`);
+                else if (s.includes("HIGH")) $('td:eq(17)', row).html(`<span class="badge-pill status-high">${s}</span>`);
+            }
+            if (data[18]) {
+                let q = data[18].toString().toUpperCase();
                 let cls = q === "GOOD" ? "qual-good" : (q === "OK" ? "qual-ok" : (q === "LOW" ? "qual-low" : ""));
-                if(cls) $('td:eq(6)', row).html(`<span class="badge-pill ${cls}">${q}</span>`);
+                if(cls) $('td:eq(18)', row).html(`<span class="badge-pill ${cls}">${q}</span>`);
             }
         }
     });
 
+    table.on('order.dt search.dt', function () {
+        let i = 1;
+        table.cells(null, 0, { search: 'applied', order: 'applied' }).every(function (cell) {
+            this.data(i++);
+        });
+        updateLiveSummary(); 
+    }).draw();
+
     loadStoredData();
     document.getElementById('excelUpload').addEventListener('change', handleFile, false);
 });
+
+// FULL TABLE CAPTURE & SEND WITH PROFESSIONAL MESSAGE
+async function captureAndSendTable() {
+    const visibleData = table.rows({ search: 'applied' }).data().toArray();
+    if (visibleData.length === 0) { alert("Table filter karein!"); return; }
+
+    let targetMobile = "";
+    let targetName = "";
+
+    // Condition Check
+    if (activeFilters[21]) {
+        // Case 1: FOS Assigned selected
+        targetName = activeFilters[21];
+        targetMobile = visibleData[0][23] || ""; 
+    } else if (activeFilters[22]) {
+        // Case 2: FOS is All, but TL Name selected
+        targetName = activeFilters[22];
+        targetMobile = visibleData[0][24] || ""; 
+    } else {
+        // Case 3: Both are "All"
+        alert("KISKO BHEJU? NAM TOH SELECT KRO!");
+        return;
+    }
+
+    if (!targetMobile) {
+        alert("Selected user/TL ka mobile number Excel mein nahi mila!");
+        return;
+    }
+
+    const container = document.querySelector('.table-container');
+    const tableEl = document.getElementById('campaignTable');
+    
+    // UI Fixes for screenshot (preserving original style)
+    const oldHeight = container.style.height;
+    const oldOverflow = container.style.overflow;
+    container.style.height = 'auto'; 
+    container.style.overflow = 'visible';
+    
+    // Sticky components must be static for high-quality single photo
+    const stickies = document.querySelectorAll('thead th, tbody td:nth-child(-n+6)');
+    stickies.forEach(s => s.style.position = 'static');
+
+    try {
+        const canvas = await html2canvas(tableEl, {
+            scale: 2,
+            useCORS: true,
+            width: tableEl.scrollWidth,
+            height: tableEl.scrollHeight
+        });
+
+        // Restore UI
+        container.style.height = oldHeight;
+        container.style.overflow = oldOverflow;
+        stickies.forEach(s => s.style.position = 'sticky');
+
+        canvas.toBlob(async (blob) => {
+            const item = new ClipboardItem({ "image/png": blob });
+            await navigator.clipboard.write([item]);
+            
+            // Professional Marketing Message
+            const message = `*Hello ${targetName},* 👋\n\nPlease find the *Overall Marketing Performance* report for your projects. Kindly look into this data for campaign evaluation and further optimization.\n\n`;
+            
+            const wpUrl = `https://web.whatsapp.com/send?phone=${targetMobile.toString().replace(/\D/g,'')}&text=${encodeURIComponent(message)}`;
+            window.open(wpUrl, '_blank');
+        });
+    } catch (err) {
+        alert("Capture failed!");
+        container.style.height = oldHeight;
+        container.style.overflow = oldOverflow;
+        stickies.forEach(s => s.style.position = 'sticky');
+    }
+}
+
+function updateLiveSummary() {
+    const visibleData = table.rows({ search: 'applied' }).data().toArray();
+    let stats = { campaigns: new Set(), clients: new Set(), projects: visibleData.length, budget: 0, spent: 0, target: 0, delivered: 0 };
+
+    visibleData.forEach(row => {
+        if(row[2]) stats.campaigns.add(row[2]);
+        if(row[3]) stats.clients.add(row[3]);
+        let rowTarget = parseFloat(row[9]) || 0;
+        let rowDelivered = parseFloat(row[10]) || 0;
+        stats.budget += parseFloat(row[6]) || 0;
+        stats.spent += parseFloat(row[7]) || 0;
+        stats.target += rowTarget;
+        stats.delivered += (rowDelivered > rowTarget) ? rowTarget : rowDelivered;
+    });
+
+    const formatInr = (v) => "₹" + Math.round(v).toLocaleString('en-IN');
+    document.getElementById('sum-camp').innerText = stats.campaigns.size;
+    document.getElementById('sum-client').innerText = stats.clients.size;
+    document.getElementById('sum-proj').innerText = stats.projects;
+    document.getElementById('sum-budget').innerText = formatInr(stats.budget);
+    document.getElementById('sum-spent').innerText = formatInr(stats.spent);
+    document.getElementById('sum-target').innerText = stats.target.toLocaleString();
+    document.getElementById('sum-delivered').innerText = stats.delivered.toLocaleString();
+}
 
 function handleFile(e) {
     const file = e.target.files[0];
@@ -182,108 +382,81 @@ function handleFile(e) {
         const workbook = XLSX.read(data, { type: 'array' });
         masterData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
         localStorage.setItem('dashboard_data', JSON.stringify(masterData));
-        processData(masterData);
+        processData();
     };
     reader.readAsArrayBuffer(file);
 }
 
 function loadStoredData() {
     const saved = localStorage.getItem('dashboard_data');
-    if (saved) {
-        masterData = JSON.parse(saved);
-        processData(masterData);
-    }
+    if (saved) { masterData = JSON.parse(saved); processData(); }
 }
 
-function processData(dataRows) {
-    const tableData = [];
-    const platforms = new Set();
-    const cplStatus = new Set();
-    const qualStatus = new Set();
-    const spentType = new Set();
-    const tls = new Set();
-    tlUserMap = {}; 
+function processData() {
+    const rows = masterData.slice(1).filter(r => r.length > 0).map(r => {
+        // Index 23: FOS Mobile (Col 22), Index 24: TL Mobile (Col 23)
+        return [
+            "", r[0], r[1], r[2], r[3], r[4], r[7], r[8], r[20], r[9], r[10], r[11], r[12], r[13], r[14], r[15], r[16], r[5], r[6], "", r[17], r[18], r[19], r[21], r[22]
+        ];
+    }); 
+    table.clear().rows.add(rows).draw();
+    updateAllSlicers();
+}
 
-    for(let i = 1; i < dataRows.length; i++) {
-        const row = dataRows[i];
-        if(row && row.length > 0) {
-            tableData.push(row);
-            if(row[4]) platforms.add(row[4]);
-            if(row[5]) cplStatus.add(row[5]);
-            if(row[6]) qualStatus.add(row[6]);
-            if(row[17]) spentType.add(row[17]);
-            
-            // TL & User Mapping
-            let user = row[18] || "Unassigned";
-            let tl = row[19] || "No TL";
-            tls.add(tl);
-            if(!tlUserMap[tl]) tlUserMap[tl] = new Set();
-            tlUserMap[tl].add(user);
+function getAvailableValues(colIdx, ignoreOwnFilter = true) {
+    const rows = table.rows().data().toArray();
+    const filteredRows = rows.filter(row => {
+        for (let idx in activeFilters) {
+            if (ignoreOwnFilter && idx == colIdx) continue;
+            const filterVal = activeFilters[idx];
+            if (filterVal && row[idx] !== filterVal) return false;
         }
-    }
-
-    table.clear().rows.add(tableData).draw();
-    
-    updateSlicer('filter-platform', 4, platforms);
-    updateSlicer('filter-cpl', 5, cplStatus);
-    updateSlicer('filter-qual', 6, qualStatus);
-    updateSlicer('filter-spent', 17, spentType);
-    
-    // Initial TL Slicer
-    updateTLSlicer(tls);
-    // Initial User Slicer (All)
-    updateUserSlicer(null);
-}
-
-function updateTLSlicer(tlSet) {
-    let html = `<button class="btn btn-slicer active" onclick="filterTL(this, '')">All TLs</button>`;
-    Array.from(tlSet).sort().forEach(tl => {
-        html += `<button class="btn btn-slicer" onclick="filterTL(this, '${tl}')">${tl}</button>`;
+        return true;
     });
-    document.getElementById('filter-tl').innerHTML = html;
+    return [...new Set(filteredRows.map(r => r[colIdx]).filter(Boolean))].sort();
 }
 
-function updateUserSlicer(selectedTL) {
-    let users = new Set();
-    if(selectedTL) {
-        users = tlUserMap[selectedTL];
-    } else {
-        Object.values(tlUserMap).forEach(uSet => uSet.forEach(u => users.add(u)));
-    }
+function updateAllSlicers() {
+    const allRows = table.rows().data().toArray();
+    const allUniqueTLs = [...new Set(allRows.map(r => r[22]).filter(Boolean))].sort();
+    updateDropdown('select-tl', allUniqueTLs, activeFilters[22], "All Team Leaders");
+    const availableFOS = getAvailableValues(21);
+    updateDropdown('select-user', availableFOS, activeFilters[21], "All Users (FOS)");
+    updateButtonUI('filter-platform', 5, getAvailableValues(5));
+    updateButtonUI('filter-cpl', 17, getAvailableValues(17));
+    updateButtonUI('filter-qual', 18, getAvailableValues(18));
+    updateButtonUI('filter-spent', 20, getAvailableValues(20));
+}
 
-    let html = `<button class="btn btn-slicer active" onclick="filterCol(this, 18, '')">All Users</button>`;
-    Array.from(users).sort().forEach(u => {
-        html += `<button class="btn btn-slicer" onclick="filterCol(this, 18, '${u}')">${u}</button>`;
+function updateDropdown(id, valueArray, currentVal, defaultTxt) {
+    const sel = document.getElementById(id);
+    let html = `<option value="">${defaultTxt}</option>`;
+    valueArray.forEach(val => {
+        html += `<option value="${val}" ${val === currentVal ? 'selected' : ''}>${val}</option>`;
     });
-    document.getElementById('filter-user').innerHTML = html;
+    sel.innerHTML = html;
 }
 
-function filterTL(btn, tlValue) {
-    $(btn).parent().find('.btn-slicer').removeClass('active');
-    $(btn).addClass('active');
-
-    // Filter TL column (Index 19)
-    table.column(19).search(tlValue ? `^${tlValue}$` : '', true, false);
-    
-    // Reset User filter when TL changes
-    table.column(18).search('').draw();
-    
-    // Update User Slicer Buttons
-    updateUserSlicer(tlValue);
-}
-
-function updateSlicer(containerId, colIdx, valueSet) {
-    let html = `<button class="btn btn-slicer active" onclick="filterCol(this, ${colIdx}, '')">All</button>`;
-    Array.from(valueSet).sort().forEach(val => {
-        html += `<button class="btn btn-slicer" onclick="filterCol(this, ${colIdx}, '${val}')">${val}</button>`;
+function updateButtonUI(containerId, colIdx, valueArray) {
+    let html = `<button class="btn btn-slicer ${activeFilters[colIdx] === '' ? 'active' : ''}" onclick="applySlicerFilter(${colIdx}, '')">All</button>`;
+    valueArray.forEach(val => {
+        html += `<button class="btn btn-slicer ${activeFilters[colIdx] === val ? 'active' : ''}" onclick="applySlicerFilter(${colIdx}, '${val}')">${val}</button>`;
     });
     document.getElementById(containerId).innerHTML = html;
 }
 
-function filterCol(btn, idx, val) {
-    $(btn).parent().find('.btn-slicer').removeClass('active');
-    $(btn).addClass('active');
-    table.column(idx).search(val ? `^${val}$` : '', true, false).draw();
+function handleTLChange(val) {
+    activeFilters[21] = ''; 
+    table.column(21).search(''); 
+    applySlicerFilter(22, val);
+}
+
+function applySlicerFilter(colIdx, val) {
+    activeFilters[colIdx] = val;
+    const regexVal = val ? `^${val.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$` : '';
+    table.column(colIdx).search(regexVal, true, false);
+    table.draw();
+    updateAllSlicers();
 }
 
 function clearData() {
