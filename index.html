@@ -15,6 +15,8 @@
             --dark-header: #334155; 
             --border-color: #cbd5e1; 
             --whatsapp-green: #22c55e;
+            --download-blue: #0ea5e9;
+            --stats-purple: #6366f1;
         }
         
         body { background-color: var(--bg-body); font-family: 'Inter', sans-serif; padding: 10px; color: #1e293b; overflow-x: hidden; }
@@ -41,6 +43,30 @@
         }
         .btn-whatsapp-small:hover { background: #16a34a; color: #fff; }
 
+        .table-toolbar { display: flex; gap: 4px; align-items: flex-end; }
+
+        .btn-download-table, .btn-stats-table { 
+            border: 1px solid transparent; 
+            color: #fff; 
+            font-size: 9.5px; 
+            padding: 5px 12px; 
+            border-radius: 4px 4px 0 0; 
+            font-weight: 800; 
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: -1px;
+            position: relative;
+            z-index: 10;
+            transition: opacity 0.2s;
+        }
+
+        .btn-download-table { background: var(--download-blue); border-color: #0284c7; }
+        .btn-stats-table { background: var(--stats-purple); border-color: #4f46e5; }
+        
+        .btn-download-table:hover, .btn-stats-table:hover { opacity: 0.9; color: #fff; }
+
         .slicer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
         .slicer-card { background: #fff; border-radius: 6px; border: 1px solid var(--border-color); overflow: hidden; display: flex; flex-direction: column; min-height: 110px; }
         .slicer-header { background: var(--dark-header); color: #fff; font-size: 8.5px; font-weight: 700; text-transform: uppercase; padding: 5px 10px; }
@@ -60,7 +86,7 @@
         .sum-val { font-size: 10.5px; font-weight: 800; color: #0f172a; display: block; line-height: 1.1; }
 
         .table-container { 
-            background: #fff; border-radius: 6px; border: 1px solid var(--border-color); height: 560px; overflow: auto; position: relative;
+            background: #fff; border-radius: 0 6px 6px 6px; border: 1px solid var(--border-color); height: 560px; overflow: auto; position: relative;
         }
 
         table.dataTable { 
@@ -116,7 +142,7 @@
         <h4>AURUM ANALYTICA DASHBOARD</h4>
         <div class="action-group">
             <button class="btn-whatsapp-small" onclick="captureAndSendTable()" title="Copy Full Table Photo">
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 4px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
                 </svg>
                 WP SEND
@@ -167,6 +193,23 @@
         </div>
     </div>
 
+    <!-- TABLE ACTION BAR -->
+    <div class="table-toolbar">
+        <button class="btn-download-table" onclick="downloadExcel()" title="Download Filtered Excel">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+            </svg>
+            DOWNLOAD TABLE
+        </button>
+        <button class="btn-stats-table" onclick="openStatsPage()" title="View Analytics Charts">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2zm-5 5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3z"/>
+            </svg>
+            STATS
+        </button>
+    </div>
+
     <div class="table-container">
         <table id="campaignTable" class="table table-striped">
             <thead id="tableHead"></thead>
@@ -186,7 +229,7 @@ let table;
 let masterData = [];
 let activeFilters = { 5:'', 17:'', 18:'', 20:'', 21:'', 22:'' };
 
-const targetHeaders = ["S. NO", "DRR", "CAMPAIGN", "CLIENT NAME", "PROJECT NAME", "PLATFORM", "CREDIT ASSIGNED", "TOTAL CREDIT SPENT", "SHOULD WE HAVE SPENT", "CREDIT ASSIGNED FOR", "LEADS DELIVERED", "PENDING LEADS", "FEEDBACK RECEIVED", "LEADS QUALIFIED", "TARGET CPL", "CURRENT CPL", "QUALIFICAITON", "CPL STATUS", "QUALIFICATION STATUS", "SPENDING ANALYSIS", "SPENT TYPE", "ASSIGNED USER", "TL NAME"];
+const targetHeaders = ["S. NO", "DRR", "CAMPAIGN", "CLIENT NAME", "PROJECT NAME", "PLATFORM", "CREDIT ASSIGNED", "TOTAL CREDIT SPENT", "SHOULD WE HAVE SPENT", "CREDIT ASSIGNED FOR", "LEADS DELIVERED", "PENDING LEADS", "FEEDBACK RECEIVED", "LEADS QUALIFIED", "TARGET CPL", "CURRENT CPL", "QUALIFICAITON", "CPL STATUS", "QUALIFICATION STATUS", "SPENDING ANALYSIS", "SPENT TYPE", "ASSIGNED USER", "TL NAME", "CITY"];
 
 $(document).ready(function() {
     $('#tableHead').html("<tr>" + targetHeaders.map(h => `<th>${h}</th>`).join('') + "</tr>");
@@ -199,7 +242,7 @@ $(document).ready(function() {
         "autoWidth": false,
         "language": { "search": "", "searchPlaceholder": "Search..." },
         "columnDefs": [
-            { "targets": [20, 21, 22], "visible": false }, 
+            { "targets": [20, 21, 22, 23], "visible": false }, 
             { "targets": 0, "width": "35px" },
             { "targets": 1, "width": "40px" },
             { "targets": 2, "width": "65px" },
@@ -277,7 +320,63 @@ $(document).ready(function() {
     document.getElementById('excelUpload').addEventListener('change', handleFile, false);
 });
 
-// FULL TABLE CAPTURE & SEND WITH PROFESSIONAL MESSAGE
+// UPDATED STATS FUNCTION
+function openStatsPage() { 
+    // DataTables se sirf filtered data nikalein
+    const filteredData = table.rows({ search: 'applied' }).data().toArray();
+
+    if (filteredData.length === 0) {
+        alert("Pehle data upload karein ya filters check karein!");
+        return;
+    }
+
+    // Filtered data ko localStorage mein save karein
+    localStorage.setItem('filtered_stats_data', JSON.stringify(filteredData));
+    
+    // charts.html naye tab mein kholein
+    window.open('Chart.html', '_blank'); 
+}
+
+function downloadExcel() {
+    const visibleData = table.rows({ search: 'applied' }).data().toArray();
+    if (visibleData.length === 0) { alert("Data toh upload karo!"); return; }
+
+    const exportHeaders = targetHeaders.slice(0, 24); 
+    const worksheetData = [exportHeaders];
+    
+    visibleData.forEach(row => {
+        let newRow = [];
+        for(let i=0; i<24; i++) {
+            let val = row[i];
+            if ([6, 7, 8, 14, 15].includes(i)) {
+                let num = parseFloat(val);
+                val = !isNaN(num) ? "₹" + Math.round(num).toLocaleString('en-IN') : val;
+            }
+            if (i === 16) {
+                let num = parseFloat(val);
+                val = !isNaN(num) ? (num * 100).toFixed(2) + "%" : val;
+            }
+            if (i === 19) {
+                let spent = parseFloat(row[7]) || 0;
+                let should = parseFloat(row[8]) || 0;
+                val = spent > should ? "OVERSPENT" : (spent < should ? "UNDERSPENT" : "MATCHED");
+            }
+            if (typeof val === 'string') val = val.replace(/<[^>]*>?/gm, '');
+            newRow.push(val);
+        }
+        worksheetData.push(newRow);
+    });
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(worksheetData);
+    const wscols = [{wch: 6}, {wch: 6}, {wch: 12}, {wch: 25}, {wch: 25}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 12}, {wch: 12}, {wch: 15}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 18}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}];
+    ws['!cols'] = wscols;
+
+    XLSX.utils.book_append_sheet(wb, ws, "Marketing Report");
+    const date = new Date().toISOString().split('T')[0];
+    XLSX.writeFile(wb, `Marketing_Report_${date}.xlsx`);
+}
+
 async function captureAndSendTable() {
     const visibleData = table.rows({ search: 'applied' }).data().toArray();
     if (visibleData.length === 0) { alert("Table filter karein!"); return; }
@@ -285,48 +384,32 @@ async function captureAndSendTable() {
     let targetMobile = "";
     let targetName = "";
 
-    // Condition Check
     if (activeFilters[21]) {
-        // Case 1: FOS Assigned selected
         targetName = activeFilters[21];
-        targetMobile = visibleData[0][23] || ""; 
-    } else if (activeFilters[22]) {
-        // Case 2: FOS is All, but TL Name selected
-        targetName = activeFilters[22];
         targetMobile = visibleData[0][24] || ""; 
+    } else if (activeFilters[22]) {
+        targetName = activeFilters[22];
+        targetMobile = visibleData[0][25] || ""; 
     } else {
-        // Case 3: Both are "All"
         alert("KISKO BHEJU? NAM TOH SELECT KRO!");
         return;
     }
 
-    if (!targetMobile) {
-        alert("Selected user/TL ka mobile number Excel mein nahi mila!");
-        return;
-    }
+    if (!targetMobile) { alert("Mobile number nahi mila!"); return; }
 
     const container = document.querySelector('.table-container');
     const tableEl = document.getElementById('campaignTable');
     
-    // UI Fixes for screenshot (preserving original style)
     const oldHeight = container.style.height;
     const oldOverflow = container.style.overflow;
     container.style.height = 'auto'; 
     container.style.overflow = 'visible';
     
-    // Sticky components must be static for high-quality single photo
     const stickies = document.querySelectorAll('thead th, tbody td:nth-child(-n+6)');
     stickies.forEach(s => s.style.position = 'static');
 
     try {
-        const canvas = await html2canvas(tableEl, {
-            scale: 2,
-            useCORS: true,
-            width: tableEl.scrollWidth,
-            height: tableEl.scrollHeight
-        });
-
-        // Restore UI
+        const canvas = await html2canvas(tableEl, { scale: 2, useCORS: true, width: tableEl.scrollWidth, height: tableEl.scrollHeight });
         container.style.height = oldHeight;
         container.style.overflow = oldOverflow;
         stickies.forEach(s => s.style.position = 'sticky');
@@ -334,17 +417,13 @@ async function captureAndSendTable() {
         canvas.toBlob(async (blob) => {
             const item = new ClipboardItem({ "image/png": blob });
             await navigator.clipboard.write([item]);
-            
-            // Professional Marketing Message
             const message = `*Hello ${targetName},* 👋\n\nPlease find the *Overall Marketing Performance* report for your projects. Kindly look into this data for campaign evaluation and further optimization.\n\n`;
-            
             const wpUrl = `https://web.whatsapp.com/send?phone=${targetMobile.toString().replace(/\D/g,'')}&text=${encodeURIComponent(message)}`;
             window.open(wpUrl, '_blank');
         });
     } catch (err) {
         alert("Capture failed!");
-        container.style.height = oldHeight;
-        container.style.overflow = oldOverflow;
+        container.style.height = oldHeight; container.style.overflow = oldOverflow;
         stickies.forEach(s => s.style.position = 'sticky');
     }
 }
@@ -394,9 +473,33 @@ function loadStoredData() {
 
 function processData() {
     const rows = masterData.slice(1).filter(r => r.length > 0).map(r => {
-        // Index 23: FOS Mobile (Col 22), Index 24: TL Mobile (Col 23)
         return [
-            "", r[0], r[1], r[2], r[3], r[4], r[7], r[8], r[20], r[9], r[10], r[11], r[12], r[13], r[14], r[15], r[16], r[5], r[6], "", r[17], r[18], r[19], r[21], r[22]
+            "",      // 0: S.NO
+            r[0],    // 1: DRR
+            r[1],    // 2: CAMPAIGN
+            r[2],    // 3: CLIENT NAME
+            r[3],    // 4: PROJECT NAME
+            r[4],    // 5: PLATFORM
+            r[7],    // 6: CREDIT ASSIGNED
+            r[8],    // 7: TOTAL CREDIT SPENT
+            r[20],   // 8: SHOULD WE HAVE SPENT
+            r[9],    // 9: TARGET LEADS
+            r[10],   // 10: LEADS DELIVERED
+            r[11],   // 11: PENDING LEADS
+            r[12],   // 12: FEEDBACK RECEIVED
+            r[13],   // 13: LEADS QUALIFIED
+            r[14],   // 14: TARGET CPL
+            r[15],   // 15: CURRENT CPL
+            r[16],   // 16: QUALIFICAITON %
+            r[5],    // 17: CPL STATUS
+            r[6],    // 18: QUALIFICATION STATUS
+            "",      // 19: SPENDING ANALYSIS
+            r[17],   // 20: SPENT TYPE
+            r[18],   // 21: ASSIGNED USER
+            r[19],   // 22: TL NAME
+            r[23],   // 23: CITY
+            r[21],   // 24: User mobile
+            r[22]    // 25: TL mobile
         ];
     }); 
     table.clear().rows.add(rows).draw();
@@ -431,25 +534,17 @@ function updateAllSlicers() {
 function updateDropdown(id, valueArray, currentVal, defaultTxt) {
     const sel = document.getElementById(id);
     let html = `<option value="">${defaultTxt}</option>`;
-    valueArray.forEach(val => {
-        html += `<option value="${val}" ${val === currentVal ? 'selected' : ''}>${val}</option>`;
-    });
+    valueArray.forEach(val => { html += `<option value="${val}" ${val === currentVal ? 'selected' : ''}>${val}</option>`; });
     sel.innerHTML = html;
 }
 
 function updateButtonUI(containerId, colIdx, valueArray) {
     let html = `<button class="btn btn-slicer ${activeFilters[colIdx] === '' ? 'active' : ''}" onclick="applySlicerFilter(${colIdx}, '')">All</button>`;
-    valueArray.forEach(val => {
-        html += `<button class="btn btn-slicer ${activeFilters[colIdx] === val ? 'active' : ''}" onclick="applySlicerFilter(${colIdx}, '${val}')">${val}</button>`;
-    });
+    valueArray.forEach(val => { html += `<button class="btn btn-slicer ${activeFilters[colIdx] === val ? 'active' : ''}" onclick="applySlicerFilter(${colIdx}, '${val}')">${val}</button>`; });
     document.getElementById(containerId).innerHTML = html;
 }
 
-function handleTLChange(val) {
-    activeFilters[21] = ''; 
-    table.column(21).search(''); 
-    applySlicerFilter(22, val);
-}
+function handleTLChange(val) { activeFilters[21] = ''; table.column(21).search(''); applySlicerFilter(22, val); }
 
 function applySlicerFilter(colIdx, val) {
     activeFilters[colIdx] = val;
@@ -459,12 +554,7 @@ function applySlicerFilter(colIdx, val) {
     updateAllSlicers();
 }
 
-function clearData() {
-    if(confirm("Clear all data?")) {
-        localStorage.removeItem('dashboard_data');
-        location.reload();
-    }
-}
+function clearData() { if(confirm("Clear all data?")) { localStorage.removeItem('dashboard_data'); location.reload(); } }
 </script>
 </body>
 </html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Analytics | Stats View</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f1f5f9;
+            margin: 0; padding: 0;
+            height: 100vh; width: 100vw;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .top-nav {
+            background: #ffffff; padding: 0 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #e2e8f0; height: 50px; flex-shrink: 0;
+        }
+        .top-nav h1 { font-size: 0.9rem; margin: 0; color: #1e293b; font-weight: 800; text-transform: uppercase; }
+        .select-group { display: flex; align-items: center; gap: 15px; }
+        .select-wrapper { display: flex; align-items: center; gap: 6px; }
+        label { font-size: 0.65rem; font-weight: 800; color: #64748b; }
+        select {
+            padding: 4px 10px; border-radius: 6px; border: 2px solid #6366f1;
+            font-weight: 700; font-size: 0.8rem; outline: none; min-width: 180px;
+            background-color: #f8faff;
+        }
+        .dashboard-main {
+            flex: 1; display: flex; flex-direction: column;
+            padding: 8px; gap: 8px; height: calc(100vh - 50px);
+        }
+        .card {
+            background: white; border-radius: 12px; padding: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02); display: flex; flex-direction: column;
+        }
+        h3 { margin: 0 0 5px 0; font-size: 0.75rem; text-transform: uppercase; color: #475569; text-align: center; font-weight: 700; }
+        
+        .bar-container { height: 38%; flex-shrink: 0; }
+        .pie-row { flex: 1; display: flex; gap: 8px; min-height: 0; }
+        .pie-card { flex: 1; min-width: 0; }
+        .canvas-box { flex: 1; position: relative; width: 100%; height: 100%; min-height: 0; }
+        
+        .no-data { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="top-nav">
+    <h1>Stats Analytics</h1>
+    <div class="select-group">
+        <div class="select-wrapper">
+            <label>USER (FOS):</label>
+            <select id="userSelect" onchange="handleUserChange()">
+                <!-- Users will load here -->
+            </select>
+        </div>
+        <div class="select-wrapper">
+            <label>CITY:</label>
+            <select id="citySelect" onchange="updateDashboard()">
+                <option value="ALL">All Cities</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div id="mainUI" class="dashboard-main">
+    <div class="card bar-container">
+        <h3>Campaigns by City</h3>
+        <div class="canvas-box">
+            <canvas id="cityChart"></canvas>
+        </div>
+    </div>
+    <div class="pie-row">
+        <div class="card pie-card">
+            <h3>CPL Status</h3>
+            <div class="canvas-box">
+                <canvas id="cplChart"></canvas>
+            </div>
+        </div>
+        <div class="card pie-card">
+            <h3>Qualification Status</h3>
+            <div class="canvas-box">
+                <canvas id="qualChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="noDataMsg" class="no-data" style="display:none;">
+    <h2>No Data Found!</h2>
+    <p>Please filter data on the main dashboard and click STATS.</p>
+</div>
+
+<script>
+    let masterFilteredRows = [];
+    let charts = {};
+    Chart.register(ChartDataLabels);
+
+    function loadData() {
+        const raw = localStorage.getItem('filtered_stats_data');
+        if (!raw) {
+            document.getElementById('mainUI').style.display = 'none';
+            document.getElementById('noDataMsg').style.display = 'block';
+            return;
+        }
+
+        masterFilteredRows = JSON.parse(raw);
+        
+        // Load All Unique Users first
+        const users = [...new Set(masterFilteredRows.map(r => r[21]).filter(Boolean))].sort();
+        const uSelect = document.getElementById('userSelect');
+        
+        users.forEach(u => uSelect.add(new Option(u, u)));
+
+        // Select the first user by default and update city dropdown
+        if (users.length > 0) {
+            handleUserChange();
+        }
+    }
+
+    // This function runs whenever the USER changes
+    function handleUserChange() {
+        const selectedUser = document.getElementById('userSelect').value;
+        const cSelect = document.getElementById('citySelect');
+        
+        // Clear current cities (keep only "All Cities")
+        cSelect.innerHTML = '<option value="ALL">All Cities</option>';
+
+        // Find unique cities ONLY for this selected user
+        const userCities = [...new Set(
+            masterFilteredRows
+                .filter(r => r[21] === selectedUser)
+                .map(r => r[23])
+                .filter(Boolean)
+        )].sort();
+
+        userCities.forEach(c => cSelect.add(new Option(c, c)));
+
+        // Update the charts
+        updateDashboard();
+    }
+
+    function updateDashboard() {
+        const selectedUser = document.getElementById('userSelect').value;
+        const selectedCity = document.getElementById('citySelect').value;
+
+        // Apply filters
+        let finalRows = masterFilteredRows.filter(row => {
+            const userMatch = (row[21] === selectedUser);
+            const cityMatch = (selectedCity === "ALL" || row[23] === selectedCity);
+            return userMatch && cityMatch;
+        });
+
+        if (finalRows.length === 0) {
+            clearCharts();
+            return;
+        }
+
+        const stats = {
+            cities: {},
+            cpl: { high: 0, low: 0, ok: 0, notCalc: 0 },
+            qual: { good: 0, ok: 0, low: 0, notCalc: 0 }
+        };
+
+        finalRows.forEach(row => {
+            const city = row[23] || "Unknown";
+            const cpl = (row[17] || "").toUpperCase();
+            const q = (row[18] || "").toUpperCase();
+
+            stats.cities[city] = (stats.cities[city] || 0) + 1;
+
+            if (cpl.includes("HIGH")) stats.cpl.high++;
+            else if (cpl.includes("LOW")) stats.cpl.low++;
+            else if (cpl.includes("OK")) stats.cpl.ok++;
+            else stats.cpl.notCalc++;
+
+            if (q.includes("GOOD")) stats.qual.good++;
+            else if (q.includes("OK")) stats.qual.ok++;
+            else if (q.includes("LOW")) stats.qual.low++;
+            else stats.qual.notCalc++;
+        });
+
+        renderCityChart(stats.cities);
+        renderPie('cplChart', [stats.cpl.high, stats.cpl.low, stats.cpl.ok, stats.cpl.notCalc], 
+                  ['High', 'Low', 'OK', 'N/C'], ['#ef4444', '#22c55e', '#3b82f6', '#94a3b8']);
+        
+        renderPie('qualChart', [stats.qual.good, stats.qual.ok, stats.qual.low, stats.qual.notCalc], 
+                  ['Good', 'OK', 'Low', 'N/C'], ['#166534', '#dcfce7', '#ef4444', '#94a3b8']);
+    }
+
+    function renderCityChart(cityObj) {
+        const ctx = document.getElementById('cityChart').getContext('2d');
+        const labels = Object.keys(cityObj).sort((a,b) => cityObj[b] - cityObj[a]);
+        const data = labels.map(l => cityObj[l]);
+
+        if(charts.city) charts.city.destroy();
+        charts.city = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{ data: data, backgroundColor: '#6366f1', borderRadius: 4, barThickness: 35 }]
+            },
+            options: { 
+                responsive: true, maintainAspectRatio: false,
+                plugins: { 
+                    legend: { display: false }, 
+                    datalabels: { anchor: 'end', align: 'top', font: { size: 10, weight: 'bold' }, color: '#6366f1' } 
+                },
+                scales: { 
+                    x: { grid: { display: false }, ticks: { font: { size: 9, weight: 'bold' } } }, 
+                    y: { beginAtZero: true, ticks: { font: { size: 8 }, stepSize: 1 } } 
+                }
+            }
+        });
+    }
+
+    function renderPie(id, dataValues, labels, colors) {
+        const ctx = document.getElementById(id).getContext('2d');
+        const total = dataValues.reduce((a, b) => a + b, 0);
+        if(charts[id]) charts[id].destroy();
+        charts[id] = new Chart(ctx, {
+            type: 'doughnut',
+            data: { labels: labels, datasets: [{ data: dataValues, backgroundColor: colors, borderWidth: 2, borderColor: '#fff' }] },
+            options: {
+                responsive: true, maintainAspectRatio: false, cutout: '65%',
+                plugins: {
+                    legend: { position: 'bottom', labels: { boxWidth: 8, font: { size: 9 }, padding: 5 } },
+                    datalabels: { 
+                        color: (context) => (context.dataset.data[context.dataIndex] > 0 ? '#fff' : 'transparent'),
+                        font: { weight: 'bold', size: 9 }, 
+                        formatter: (val) => val === 0 ? null : val + " (" + ((val/total)*100).toFixed(0) + "%)" 
+                    }
+                }
+            }
+        });
+    }
+
+    function clearCharts() {
+        Object.values(charts).forEach(c => { if(c) c.destroy(); });
+    }
+
+    window.onload = loadData;
+</script>
+</body>
+</html>
