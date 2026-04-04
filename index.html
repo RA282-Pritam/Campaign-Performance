@@ -227,24 +227,14 @@
 <script>
 let table;
 let masterData = [];
-let activeFilters = { 5:'', 17:'', 18:'', 20:'', 21:'', 22:'' };
-let isAbove70Active = false; // Flag for special filter
+// Index 20 (Spent Type) is now an array to support multi-select
+let activeFilters = { 5:'', 17:'', 18:'', 20:[], 21:'', 22:'' };
 
 const targetHeaders = ["S. NO", "DRR", "CAMPAIGN", "CLIENT NAME", "PROJECT NAME", "PLATFORM", "CREDIT ASSIGNED", "TOTAL CREDIT SPENT", "SHOULD WE HAVE SPENT", "CREDIT ASSIGNED FOR", "LEADS DELIVERED", "PENDING LEADS", "FEEDBACK RECEIVED", "LEADS QUALIFIED", "TARGET CPL", "CURRENT CPL", "QUALIFICAITON", "CPL STATUS", "QUALIFICATION STATUS", "SPENDING ANALYSIS", "SPENT TYPE", "ASSIGNED USER", "TL NAME", "CITY"];
 
 $(document).ready(function() {
     $('#tableHead').html("<tr>" + targetHeaders.map(h => `<th>${h}</th>`).join('') + "</tr>");
     
-    // CUSTOM FILTER FOR ABOVE 70%
-    $.fn.dataTable.ext.search.push(
-        function(settings, data, dataIndex) {
-            if (!isAbove70Active) return true;
-            // Column 16 is Qualification %
-            let qualValue = parseFloat(table.row(dataIndex).data()[16]) || 0;
-            return qualValue >= 0.7; // Checks for 70%
-        }
-    );
-
     table = $('#campaignTable').DataTable({
         "dom": 'frti',
         "paging": false,
@@ -454,7 +444,12 @@ function getAvailableValues(colIdx, ignoreOwnFilter = true) {
     const filteredRows = rows.filter(row => {
         for (let idx in activeFilters) {
             if (ignoreOwnFilter && idx == colIdx) continue;
-            if (activeFilters[idx] && row[idx] !== activeFilters[idx]) return false;
+            let currentFilter = activeFilters[idx];
+            if (Array.isArray(currentFilter)) {
+                if (currentFilter.length > 0 && !currentFilter.includes(row[idx])) return false;
+            } else {
+                if (currentFilter && row[idx] !== currentFilter) return false;
+            }
         }
         return true;
     });
@@ -478,39 +473,53 @@ function updateDropdown(id, valueArray, currentVal, defaultTxt) {
     sel.innerHTML = html;
 }
 
-// UPDATED: ADDED ABOVE 70% BUTTON LOGIC
 function updateButtonUI(containerId, colIdx, valueArray) {
-    let html = `<button class="btn btn-slicer ${activeFilters[colIdx] === '' && !isAbove70Active ? 'active' : ''}" onclick="clearSlicerAndSpecial(${colIdx})">All</button>`;
+    const currentFilter = activeFilters[colIdx];
+    const isMulti = Array.isArray(currentFilter);
     
-    // Add Special Button ONLY to Spent Type slicer
-    if (containerId === 'filter-spent') {
-        html += `<button class="btn btn-slicer ${isAbove70Active ? 'active' : ''}" onclick="toggleAbove70()">ABOVE 70%</button>`;
-    }
-
+    // Check if "All" should be active
+    const isAllActive = isMulti ? currentFilter.length === 0 : currentFilter === '';
+    
+    let html = `<button class="btn btn-slicer ${isAllActive ? 'active' : ''}" onclick="clearSlicer(${colIdx})">All</button>`;
+    
     valueArray.forEach(val => { 
-        html += `<button class="btn btn-slicer ${activeFilters[colIdx] === val ? 'active' : ''}" onclick="applySlicerFilter(${colIdx}, '${val}')">${val}</button>`; 
+        let isActive = isMulti ? currentFilter.includes(val) : currentFilter === val;
+        let func = isMulti ? `toggleMultiFilter(${colIdx}, '${val}')` : `applySlicerFilter(${colIdx}, '${val}')`;
+        html += `<button class="btn btn-slicer ${isActive ? 'active' : ''}" onclick="${func}">${val}</button>`; 
     });
     document.getElementById(containerId).innerHTML = html;
 }
 
-function toggleAbove70() {
-    isAbove70Active = !isAbove70Active;
-    table.draw();
-    updateAllSlicers();
+function clearSlicer(colIdx) {
+    if (Array.isArray(activeFilters[colIdx])) {
+        activeFilters[colIdx] = [];
+    } else {
+        activeFilters[colIdx] = '';
+    }
+    applySlicerFilter(colIdx, '');
 }
 
-function clearSlicerAndSpecial(colIdx) {
-    isAbove70Active = false;
-    applySlicerFilter(colIdx, '');
+// Special Multi-Select Toggle for Spent Type
+function toggleMultiFilter(colIdx, val) {
+    let arr = activeFilters[colIdx];
+    let idx = arr.indexOf(val);
+    if (idx > -1) arr.splice(idx, 1);
+    else arr.push(val);
+    
+    // Create regex for multiple values: ^(Val1|Val2)$
+    let regexVal = arr.length > 0 ? `^(${arr.map(v => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})$` : '';
+    table.column(colIdx).search(regexVal, true, false).draw();
+    updateAllSlicers();
 }
 
 function handleTLChange(val) { activeFilters[21] = ''; table.column(21).search(''); applySlicerFilter(22, val); }
 
 function applySlicerFilter(colIdx, val) {
-    activeFilters[colIdx] = val;
+    if (!Array.isArray(activeFilters[colIdx])) {
+        activeFilters[colIdx] = val;
+    }
     const regexVal = val ? `^${val.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$` : '';
-    table.column(colIdx).search(regexVal, true, false);
-    table.draw();
+    table.column(colIdx).search(regexVal, true, false).draw();
     updateAllSlicers();
 }
 
