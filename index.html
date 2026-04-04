@@ -228,12 +228,23 @@
 let table;
 let masterData = [];
 let activeFilters = { 5:'', 17:'', 18:'', 20:'', 21:'', 22:'' };
+let isAbove70Active = false; // Flag for special filter
 
 const targetHeaders = ["S. NO", "DRR", "CAMPAIGN", "CLIENT NAME", "PROJECT NAME", "PLATFORM", "CREDIT ASSIGNED", "TOTAL CREDIT SPENT", "SHOULD WE HAVE SPENT", "CREDIT ASSIGNED FOR", "LEADS DELIVERED", "PENDING LEADS", "FEEDBACK RECEIVED", "LEADS QUALIFIED", "TARGET CPL", "CURRENT CPL", "QUALIFICAITON", "CPL STATUS", "QUALIFICATION STATUS", "SPENDING ANALYSIS", "SPENT TYPE", "ASSIGNED USER", "TL NAME", "CITY"];
 
 $(document).ready(function() {
     $('#tableHead').html("<tr>" + targetHeaders.map(h => `<th>${h}</th>`).join('') + "</tr>");
     
+    // CUSTOM FILTER FOR ABOVE 70%
+    $.fn.dataTable.ext.search.push(
+        function(settings, data, dataIndex) {
+            if (!isAbove70Active) return true;
+            // Column 16 is Qualification %
+            let qualValue = parseFloat(table.row(dataIndex).data()[16]) || 0;
+            return qualValue >= 0.7; // Checks for 70%
+        }
+    );
+
     table = $('#campaignTable').DataTable({
         "dom": 'frti',
         "paging": false,
@@ -320,30 +331,19 @@ $(document).ready(function() {
     document.getElementById('excelUpload').addEventListener('change', handleFile, false);
 });
 
-// UPDATED STATS FUNCTION
+// FUNCTIONS
 function openStatsPage() { 
-    // DataTables se sirf filtered data nikalein
     const filteredData = table.rows({ search: 'applied' }).data().toArray();
-
-    if (filteredData.length === 0) {
-        alert("Pehle data upload karein ya filters check karein!");
-        return;
-    }
-
-    // Filtered data ko localStorage mein save karein
+    if (filteredData.length === 0) { alert("Pehle data upload karein!"); return; }
     localStorage.setItem('filtered_stats_data', JSON.stringify(filteredData));
-    
-    // charts.html naye tab mein kholein
     window.open('Chart.html', '_blank'); 
 }
 
 function downloadExcel() {
     const visibleData = table.rows({ search: 'applied' }).data().toArray();
     if (visibleData.length === 0) { alert("Data toh upload karo!"); return; }
-
     const exportHeaders = targetHeaders.slice(0, 24); 
     const worksheetData = [exportHeaders];
-    
     visibleData.forEach(row => {
         let newRow = [];
         for(let i=0; i<24; i++) {
@@ -366,72 +366,43 @@ function downloadExcel() {
         }
         worksheetData.push(newRow);
     });
-
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet(worksheetData);
-    const wscols = [{wch: 6}, {wch: 6}, {wch: 12}, {wch: 25}, {wch: 25}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 12}, {wch: 12}, {wch: 15}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 18}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}];
-    ws['!cols'] = wscols;
-
+    ws['!cols'] = [{wch: 6}, {wch: 6}, {wch: 12}, {wch: 25}, {wch: 25}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 12}, {wch: 12}, {wch: 15}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 18}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}];
     XLSX.utils.book_append_sheet(wb, ws, "Marketing Report");
-    const date = new Date().toISOString().split('T')[0];
-    XLSX.writeFile(wb, `Marketing_Report_${date}.xlsx`);
+    XLSX.writeFile(wb, `Marketing_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
 }
 
 async function captureAndSendTable() {
     const visibleData = table.rows({ search: 'applied' }).data().toArray();
     if (visibleData.length === 0) { alert("Table filter karein!"); return; }
-
-    let targetMobile = "";
-    let targetName = "";
-
-    if (activeFilters[21]) {
-        targetName = activeFilters[21];
-        targetMobile = visibleData[0][24] || ""; 
-    } else if (activeFilters[22]) {
-        targetName = activeFilters[22];
-        targetMobile = visibleData[0][25] || ""; 
-    } else {
-        alert("KISKO BHEJU? NAM TOH SELECT KRO!");
-        return;
-    }
-
+    let targetMobile = ""; let targetName = "";
+    if (activeFilters[21]) { targetName = activeFilters[21]; targetMobile = visibleData[0][24] || ""; } 
+    else if (activeFilters[22]) { targetName = activeFilters[22]; targetMobile = visibleData[0][25] || ""; } 
+    else { alert("NAME SELECT KRO!"); return; }
     if (!targetMobile) { alert("Mobile number nahi mila!"); return; }
-
     const container = document.querySelector('.table-container');
     const tableEl = document.getElementById('campaignTable');
-    
-    const oldHeight = container.style.height;
-    const oldOverflow = container.style.overflow;
-    container.style.height = 'auto'; 
-    container.style.overflow = 'visible';
-    
+    const oldHeight = container.style.height; const oldOverflow = container.style.overflow;
+    container.style.height = 'auto'; container.style.overflow = 'visible';
     const stickies = document.querySelectorAll('thead th, tbody td:nth-child(-n+6)');
     stickies.forEach(s => s.style.position = 'static');
-
     try {
         const canvas = await html2canvas(tableEl, { scale: 2, useCORS: true, width: tableEl.scrollWidth, height: tableEl.scrollHeight });
-        container.style.height = oldHeight;
-        container.style.overflow = oldOverflow;
-        stickies.forEach(s => s.style.position = 'sticky');
-
+        container.style.height = oldHeight; container.style.overflow = oldOverflow; stickies.forEach(s => s.style.position = 'sticky');
         canvas.toBlob(async (blob) => {
             const item = new ClipboardItem({ "image/png": blob });
             await navigator.clipboard.write([item]);
-            const message = `*Hello ${targetName},* 👋\n\nPlease find the *Overall Marketing Performance* report for your projects. Kindly look into this data for campaign evaluation and further optimization.\n\n`;
+            const message = `*Hello ${targetName},* 👋\n\nPlease find the *Overall Marketing Performance* report for your projects.`;
             const wpUrl = `https://web.whatsapp.com/send?phone=${targetMobile.toString().replace(/\D/g,'')}&text=${encodeURIComponent(message)}`;
             window.open(wpUrl, '_blank');
         });
-    } catch (err) {
-        alert("Capture failed!");
-        container.style.height = oldHeight; container.style.overflow = oldOverflow;
-        stickies.forEach(s => s.style.position = 'sticky');
-    }
+    } catch (err) { alert("Capture failed!"); container.style.height = oldHeight; container.style.overflow = oldOverflow; stickies.forEach(s => s.style.position = 'sticky'); }
 }
 
 function updateLiveSummary() {
     const visibleData = table.rows({ search: 'applied' }).data().toArray();
     let stats = { campaigns: new Set(), clients: new Set(), projects: visibleData.length, budget: 0, spent: 0, target: 0, delivered: 0 };
-
     visibleData.forEach(row => {
         if(row[2]) stats.campaigns.add(row[2]);
         if(row[3]) stats.clients.add(row[3]);
@@ -442,7 +413,6 @@ function updateLiveSummary() {
         stats.target += rowTarget;
         stats.delivered += (rowDelivered > rowTarget) ? rowTarget : rowDelivered;
     });
-
     const formatInr = (v) => "₹" + Math.round(v).toLocaleString('en-IN');
     document.getElementById('sum-camp').innerText = stats.campaigns.size;
     document.getElementById('sum-client').innerText = stats.clients.size;
@@ -473,34 +443,7 @@ function loadStoredData() {
 
 function processData() {
     const rows = masterData.slice(1).filter(r => r.length > 0).map(r => {
-        return [
-            "",      // 0: S.NO
-            r[0],    // 1: DRR
-            r[1],    // 2: CAMPAIGN
-            r[2],    // 3: CLIENT NAME
-            r[3],    // 4: PROJECT NAME
-            r[4],    // 5: PLATFORM
-            r[7],    // 6: CREDIT ASSIGNED
-            r[8],    // 7: TOTAL CREDIT SPENT
-            r[20],   // 8: SHOULD WE HAVE SPENT
-            r[9],    // 9: TARGET LEADS
-            r[10],   // 10: LEADS DELIVERED
-            r[11],   // 11: PENDING LEADS
-            r[12],   // 12: FEEDBACK RECEIVED
-            r[13],   // 13: LEADS QUALIFIED
-            r[14],   // 14: TARGET CPL
-            r[15],   // 15: CURRENT CPL
-            r[16],   // 16: QUALIFICAITON %
-            r[5],    // 17: CPL STATUS
-            r[6],    // 18: QUALIFICATION STATUS
-            "",      // 19: SPENDING ANALYSIS
-            r[17],   // 20: SPENT TYPE
-            r[18],   // 21: ASSIGNED USER
-            r[19],   // 22: TL NAME
-            r[23],   // 23: CITY
-            r[21],   // 24: User mobile
-            r[22]    // 25: TL mobile
-        ];
+        return ["", r[0], r[1], r[2], r[3], r[4], r[7], r[8], r[20], r[9], r[10], r[11], r[12], r[13], r[14], r[15], r[16], r[5], r[6], "", r[17], r[18], r[19], r[23], r[21], r[22]];
     }); 
     table.clear().rows.add(rows).draw();
     updateAllSlicers();
@@ -511,8 +454,7 @@ function getAvailableValues(colIdx, ignoreOwnFilter = true) {
     const filteredRows = rows.filter(row => {
         for (let idx in activeFilters) {
             if (ignoreOwnFilter && idx == colIdx) continue;
-            const filterVal = activeFilters[idx];
-            if (filterVal && row[idx] !== filterVal) return false;
+            if (activeFilters[idx] && row[idx] !== activeFilters[idx]) return false;
         }
         return true;
     });
@@ -521,10 +463,8 @@ function getAvailableValues(colIdx, ignoreOwnFilter = true) {
 
 function updateAllSlicers() {
     const allRows = table.rows().data().toArray();
-    const allUniqueTLs = [...new Set(allRows.map(r => r[22]).filter(Boolean))].sort();
-    updateDropdown('select-tl', allUniqueTLs, activeFilters[22], "All Team Leaders");
-    const availableFOS = getAvailableValues(21);
-    updateDropdown('select-user', availableFOS, activeFilters[21], "All Users (FOS)");
+    updateDropdown('select-tl', [...new Set(allRows.map(r => r[22]).filter(Boolean))].sort(), activeFilters[22], "All Team Leaders");
+    updateDropdown('select-user', getAvailableValues(21), activeFilters[21], "All Users (FOS)");
     updateButtonUI('filter-platform', 5, getAvailableValues(5));
     updateButtonUI('filter-cpl', 17, getAvailableValues(17));
     updateButtonUI('filter-qual', 18, getAvailableValues(18));
@@ -538,10 +478,30 @@ function updateDropdown(id, valueArray, currentVal, defaultTxt) {
     sel.innerHTML = html;
 }
 
+// UPDATED: ADDED ABOVE 70% BUTTON LOGIC
 function updateButtonUI(containerId, colIdx, valueArray) {
-    let html = `<button class="btn btn-slicer ${activeFilters[colIdx] === '' ? 'active' : ''}" onclick="applySlicerFilter(${colIdx}, '')">All</button>`;
-    valueArray.forEach(val => { html += `<button class="btn btn-slicer ${activeFilters[colIdx] === val ? 'active' : ''}" onclick="applySlicerFilter(${colIdx}, '${val}')">${val}</button>`; });
+    let html = `<button class="btn btn-slicer ${activeFilters[colIdx] === '' && !isAbove70Active ? 'active' : ''}" onclick="clearSlicerAndSpecial(${colIdx})">All</button>`;
+    
+    // Add Special Button ONLY to Spent Type slicer
+    if (containerId === 'filter-spent') {
+        html += `<button class="btn btn-slicer ${isAbove70Active ? 'active' : ''}" onclick="toggleAbove70()">ABOVE 70%</button>`;
+    }
+
+    valueArray.forEach(val => { 
+        html += `<button class="btn btn-slicer ${activeFilters[colIdx] === val ? 'active' : ''}" onclick="applySlicerFilter(${colIdx}, '${val}')">${val}</button>`; 
+    });
     document.getElementById(containerId).innerHTML = html;
+}
+
+function toggleAbove70() {
+    isAbove70Active = !isAbove70Active;
+    table.draw();
+    updateAllSlicers();
+}
+
+function clearSlicerAndSpecial(colIdx) {
+    isAbove70Active = false;
+    applySlicerFilter(colIdx, '');
 }
 
 function handleTLChange(val) { activeFilters[21] = ''; table.column(21).search(''); applySlicerFilter(22, val); }
