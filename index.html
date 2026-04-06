@@ -90,7 +90,7 @@
         }
 
         table.dataTable { 
-            table-layout: fixed !important; border-collapse: separate !important; border-spacing: 0 !important; width: 1750px !important; margin: 0 !important; 
+            table-layout: fixed !important; border-collapse: separate !important; border-spacing: 0 !important; width: 1850px !important; margin: 0 !important; 
         }
 
         table.dataTable thead th { 
@@ -100,7 +100,6 @@
         table.dataTable tbody td { padding: 4px 8px !important; font-size: 10px; border: 1px solid #f1f5f9 !important; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
         .dt-center { text-align: center !important; }
 
-        /* Frozen Columns 1 to 6 */
         table.dataTable thead th:nth-child(1), table.dataTable tbody td:nth-child(1) { position: sticky !important; left: 0; z-index: 1010; }
         table.dataTable thead th:nth-child(2), table.dataTable tbody td:nth-child(2) { position: sticky !important; left: 35px; z-index: 1010; }
         table.dataTable thead th:nth-child(3), table.dataTable tbody td:nth-child(3) { position: sticky !important; left: 75px; z-index: 1010; }
@@ -169,7 +168,7 @@
         <div class="slicer-card"><div class="slicer-header">Platform</div><div id="filter-platform" class="slicer-body"></div></div>
         <div class="slicer-card"><div class="slicer-header">CPL Status</div><div id="filter-cpl" class="slicer-body"></div></div>
         <div class="slicer-card"><div class="slicer-header">Qual Status</div><div id="filter-qual" class="slicer-body"></div></div>
-        <div class="slicer-card"><div class="slicer-header">Spent Type</div><div id="filter-spent" class="slicer-body"></div></div>
+        <div class="slicer-card"><div class="slicer-header">Spent Type (Multi)</div><div id="filter-spent" class="slicer-body"></div></div>
         
         <div class="slicer-card" style="border-color: #cbd5e1; background: #fafafa;">
             <div class="slicer-header" style="background: #1e293b;">Live Summary (Filtered View)</div>
@@ -193,7 +192,6 @@
         </div>
     </div>
 
-    <!-- TABLE ACTION BAR -->
     <div class="table-toolbar">
         <button class="btn-download-table" onclick="downloadExcel()" title="Download Filtered Excel">
             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
@@ -227,7 +225,7 @@
 <script>
 let table;
 let masterData = [];
-// Index 20 (Spent Type) is now an array to support multi-select
+// Index 20 (Spent Type) is now an array []
 let activeFilters = { 5:'', 17:'', 18:'', 20:[], 21:'', 22:'' };
 
 const targetHeaders = ["S. NO", "DRR", "CAMPAIGN", "CLIENT NAME", "PROJECT NAME", "PLATFORM", "CREDIT ASSIGNED", "TOTAL CREDIT SPENT", "SHOULD WE HAVE SPENT", "CREDIT ASSIGNED FOR", "LEADS DELIVERED", "PENDING LEADS", "FEEDBACK RECEIVED", "LEADS QUALIFIED", "TARGET CPL", "CURRENT CPL", "QUALIFICAITON", "CPL STATUS", "QUALIFICATION STATUS", "SPENDING ANALYSIS", "SPENT TYPE", "ASSIGNED USER", "TL NAME", "CITY"];
@@ -243,7 +241,7 @@ $(document).ready(function() {
         "autoWidth": false,
         "language": { "search": "", "searchPlaceholder": "Search..." },
         "columnDefs": [
-            { "targets": [20, 21, 22, 23], "visible": false }, 
+            { "targets": [20, 21, 22], "visible": false },
             { "targets": 0, "width": "35px" },
             { "targets": 1, "width": "40px" },
             { "targets": 2, "width": "65px" },
@@ -252,6 +250,7 @@ $(document).ready(function() {
             { "targets": 5, "width": "100px" },
             { "targets": [6, 10, 11, 13, 14, 15], "className": "dt-center", "width": "60px" },
             { "targets": [7, 8, 9, 12, 16, 17, 18], "className": "dt-center", "width": "85px" },
+            { "targets": 23, "width": "100px" },
             { 
                 "targets": 19, 
                 "width": "75px", 
@@ -321,10 +320,12 @@ $(document).ready(function() {
     document.getElementById('excelUpload').addEventListener('change', handleFile, false);
 });
 
-// FUNCTIONS
 function openStatsPage() { 
     const filteredData = table.rows({ search: 'applied' }).data().toArray();
-    if (filteredData.length === 0) { alert("Pehle data upload karein!"); return; }
+    if (filteredData.length === 0) {
+        alert("Pehle data upload karein ya filters check karein!");
+        return;
+    }
     localStorage.setItem('filtered_stats_data', JSON.stringify(filteredData));
     window.open('Chart.html', '_blank'); 
 }
@@ -332,8 +333,10 @@ function openStatsPage() {
 function downloadExcel() {
     const visibleData = table.rows({ search: 'applied' }).data().toArray();
     if (visibleData.length === 0) { alert("Data toh upload karo!"); return; }
+
     const exportHeaders = targetHeaders.slice(0, 24); 
     const worksheetData = [exportHeaders];
+    
     visibleData.forEach(row => {
         let newRow = [];
         for(let i=0; i<24; i++) {
@@ -356,43 +359,72 @@ function downloadExcel() {
         }
         worksheetData.push(newRow);
     });
+
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet(worksheetData);
-    ws['!cols'] = [{wch: 6}, {wch: 6}, {wch: 12}, {wch: 25}, {wch: 25}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 12}, {wch: 12}, {wch: 15}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 18}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}];
+    const wscols = [{wch: 6}, {wch: 6}, {wch: 12}, {wch: 25}, {wch: 25}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 12}, {wch: 12}, {wch: 15}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 18}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}];
+    ws['!cols'] = wscols;
+
     XLSX.utils.book_append_sheet(wb, ws, "Marketing Report");
-    XLSX.writeFile(wb, `Marketing_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
+    const date = new Date().toISOString().split('T')[0];
+    XLSX.writeFile(wb, `Marketing_Report_${date}.xlsx`);
 }
 
 async function captureAndSendTable() {
     const visibleData = table.rows({ search: 'applied' }).data().toArray();
     if (visibleData.length === 0) { alert("Table filter karein!"); return; }
-    let targetMobile = ""; let targetName = "";
-    if (activeFilters[21]) { targetName = activeFilters[21]; targetMobile = visibleData[0][24] || ""; } 
-    else if (activeFilters[22]) { targetName = activeFilters[22]; targetMobile = visibleData[0][25] || ""; } 
-    else { alert("NAME SELECT KRO!"); return; }
+
+    let targetMobile = "";
+    let targetName = "";
+
+    if (activeFilters[21]) {
+        targetName = activeFilters[21];
+        targetMobile = visibleData[0][24] || ""; 
+    } else if (activeFilters[22]) {
+        targetName = activeFilters[22];
+        targetMobile = visibleData[0][25] || ""; 
+    } else {
+        alert("KISKO BHEJU? NAM TOH SELECT KRO!");
+        return;
+    }
+
     if (!targetMobile) { alert("Mobile number nahi mila!"); return; }
+
     const container = document.querySelector('.table-container');
     const tableEl = document.getElementById('campaignTable');
-    const oldHeight = container.style.height; const oldOverflow = container.style.overflow;
-    container.style.height = 'auto'; container.style.overflow = 'visible';
+    
+    const oldHeight = container.style.height;
+    const oldOverflow = container.style.overflow;
+    container.style.height = 'auto'; 
+    container.style.overflow = 'visible';
+    
     const stickies = document.querySelectorAll('thead th, tbody td:nth-child(-n+6)');
     stickies.forEach(s => s.style.position = 'static');
+
     try {
         const canvas = await html2canvas(tableEl, { scale: 2, useCORS: true, width: tableEl.scrollWidth, height: tableEl.scrollHeight });
-        container.style.height = oldHeight; container.style.overflow = oldOverflow; stickies.forEach(s => s.style.position = 'sticky');
+        container.style.height = oldHeight;
+        container.style.overflow = oldOverflow;
+        stickies.forEach(s => s.style.position = 'sticky');
+
         canvas.toBlob(async (blob) => {
             const item = new ClipboardItem({ "image/png": blob });
             await navigator.clipboard.write([item]);
-            const message = `*Hello ${targetName},* 👋\n\nPlease find the *Overall Marketing Performance* report for your projects.`;
+            const message = `*Hello ${targetName},* 👋\n\nPlease find the *Overall Marketing Performance* report for your projects. Kindly look into this data for campaign evaluation and further optimization.\n\n`;
             const wpUrl = `https://web.whatsapp.com/send?phone=${targetMobile.toString().replace(/\D/g,'')}&text=${encodeURIComponent(message)}`;
             window.open(wpUrl, '_blank');
         });
-    } catch (err) { alert("Capture failed!"); container.style.height = oldHeight; container.style.overflow = oldOverflow; stickies.forEach(s => s.style.position = 'sticky'); }
+    } catch (err) {
+        alert("Capture failed!");
+        container.style.height = oldHeight; container.style.overflow = oldOverflow;
+        stickies.forEach(s => s.style.position = 'sticky');
+    }
 }
 
 function updateLiveSummary() {
     const visibleData = table.rows({ search: 'applied' }).data().toArray();
     let stats = { campaigns: new Set(), clients: new Set(), projects: visibleData.length, budget: 0, spent: 0, target: 0, delivered: 0 };
+
     visibleData.forEach(row => {
         if(row[2]) stats.campaigns.add(row[2]);
         if(row[3]) stats.clients.add(row[3]);
@@ -403,6 +435,7 @@ function updateLiveSummary() {
         stats.target += rowTarget;
         stats.delivered += (rowDelivered > rowTarget) ? rowTarget : rowDelivered;
     });
+
     const formatInr = (v) => "₹" + Math.round(v).toLocaleString('en-IN');
     document.getElementById('sum-camp').innerText = stats.campaigns.size;
     document.getElementById('sum-client').innerText = stats.clients.size;
@@ -444,11 +477,12 @@ function getAvailableValues(colIdx, ignoreOwnFilter = true) {
     const filteredRows = rows.filter(row => {
         for (let idx in activeFilters) {
             if (ignoreOwnFilter && idx == colIdx) continue;
-            let currentFilter = activeFilters[idx];
-            if (Array.isArray(currentFilter)) {
-                if (currentFilter.length > 0 && !currentFilter.includes(row[idx])) return false;
+            const filterVal = activeFilters[idx];
+            // Handle multi-select array for Spent Type
+            if (Array.isArray(filterVal)) {
+                if (filterVal.length > 0 && !filterVal.includes(row[idx])) return false;
             } else {
-                if (currentFilter && row[idx] !== currentFilter) return false;
+                if (filterVal && row[idx] !== filterVal) return false;
             }
         }
         return true;
@@ -458,12 +492,15 @@ function getAvailableValues(colIdx, ignoreOwnFilter = true) {
 
 function updateAllSlicers() {
     const allRows = table.rows().data().toArray();
-    updateDropdown('select-tl', [...new Set(allRows.map(r => r[22]).filter(Boolean))].sort(), activeFilters[22], "All Team Leaders");
-    updateDropdown('select-user', getAvailableValues(21), activeFilters[21], "All Users (FOS)");
+    const allUniqueTLs = [...new Set(allRows.map(r => r[22]).filter(Boolean))].sort();
+    updateDropdown('select-tl', allUniqueTLs, activeFilters[22], "All Team Leaders");
+    const availableFOS = getAvailableValues(21);
+    updateDropdown('select-user', availableFOS, activeFilters[21], "All Users (FOS)");
     updateButtonUI('filter-platform', 5, getAvailableValues(5));
     updateButtonUI('filter-cpl', 17, getAvailableValues(17));
     updateButtonUI('filter-qual', 18, getAvailableValues(18));
-    updateButtonUI('filter-spent', 20, getAvailableValues(20));
+    // Updated Multi-select UI for Spent Type
+    updateMultiButtonUI('filter-spent', 20, getAvailableValues(20));
 }
 
 function updateDropdown(id, valueArray, currentVal, defaultTxt) {
@@ -474,52 +511,47 @@ function updateDropdown(id, valueArray, currentVal, defaultTxt) {
 }
 
 function updateButtonUI(containerId, colIdx, valueArray) {
-    const currentFilter = activeFilters[colIdx];
-    const isMulti = Array.isArray(currentFilter);
-    
-    // Check if "All" should be active
-    const isAllActive = isMulti ? currentFilter.length === 0 : currentFilter === '';
-    
-    let html = `<button class="btn btn-slicer ${isAllActive ? 'active' : ''}" onclick="clearSlicer(${colIdx})">All</button>`;
-    
-    valueArray.forEach(val => { 
-        let isActive = isMulti ? currentFilter.includes(val) : currentFilter === val;
-        let func = isMulti ? `toggleMultiFilter(${colIdx}, '${val}')` : `applySlicerFilter(${colIdx}, '${val}')`;
-        html += `<button class="btn btn-slicer ${isActive ? 'active' : ''}" onclick="${func}">${val}</button>`; 
-    });
+    let html = `<button class="btn btn-slicer ${activeFilters[colIdx] === '' ? 'active' : ''}" onclick="applySlicerFilter(${colIdx}, '')">All</button>`;
+    valueArray.forEach(val => { html += `<button class="btn btn-slicer ${activeFilters[colIdx] === val ? 'active' : ''}" onclick="applySlicerFilter(${colIdx}, '${val}')">${val}</button>`; });
     document.getElementById(containerId).innerHTML = html;
 }
 
-function clearSlicer(colIdx) {
-    if (Array.isArray(activeFilters[colIdx])) {
-        activeFilters[colIdx] = [];
-    } else {
-        activeFilters[colIdx] = '';
-    }
-    applySlicerFilter(colIdx, '');
-}
-
-// Special Multi-Select Toggle for Spent Type
-function toggleMultiFilter(colIdx, val) {
-    let arr = activeFilters[colIdx];
-    let idx = arr.indexOf(val);
-    if (idx > -1) arr.splice(idx, 1);
-    else arr.push(val);
-    
-    // Create regex for multiple values: ^(Val1|Val2)$
-    let regexVal = arr.length > 0 ? `^(${arr.map(v => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})$` : '';
-    table.column(colIdx).search(regexVal, true, false).draw();
-    updateAllSlicers();
+// NEW: Multi-select Button UI
+function updateMultiButtonUI(containerId, colIdx, valueArray) {
+    const currentSelections = activeFilters[colIdx];
+    let html = `<button class="btn btn-slicer ${currentSelections.length === 0 ? 'active' : ''}" onclick="toggleMultiFilter(${colIdx}, '')">All</button>`;
+    valueArray.forEach(val => {
+        const isActive = currentSelections.includes(val);
+        html += `<button class="btn btn-slicer ${isActive ? 'active' : ''}" onclick="toggleMultiFilter(${colIdx}, '${val}')">${val}</button>`;
+    });
+    document.getElementById(containerId).innerHTML = html;
 }
 
 function handleTLChange(val) { activeFilters[21] = ''; table.column(21).search(''); applySlicerFilter(22, val); }
 
 function applySlicerFilter(colIdx, val) {
-    if (!Array.isArray(activeFilters[colIdx])) {
-        activeFilters[colIdx] = val;
-    }
+    activeFilters[colIdx] = val;
     const regexVal = val ? `^${val.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$` : '';
-    table.column(colIdx).search(regexVal, true, false).draw();
+    table.column(colIdx).search(regexVal, true, false);
+    table.draw();
+    updateAllSlicers();
+}
+
+// NEW: Multi-select Logic
+function toggleMultiFilter(colIdx, val) {
+    if (val === '') {
+        activeFilters[colIdx] = [];
+    } else {
+        const idx = activeFilters[colIdx].indexOf(val);
+        if (idx > -1) activeFilters[colIdx].splice(idx, 1);
+        else activeFilters[colIdx].push(val);
+    }
+    
+    const searchVal = activeFilters[colIdx].length > 0 
+        ? `^(${activeFilters[colIdx].map(v => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})$`
+        : '';
+        
+    table.column(colIdx).search(searchVal, true, false).draw();
     updateAllSlicers();
 }
 

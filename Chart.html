@@ -11,7 +11,7 @@
         * { box-sizing: border-box; }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f1f5f9;
+            background-color: #f8fafc;
             margin: 0; padding: 0;
             height: 100vh; width: 100vw;
             display: flex; flex-direction: column; overflow: hidden;
@@ -19,31 +19,43 @@
         .top-nav {
             background: #ffffff; padding: 0 20px;
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #e2e8f0; height: 50px; flex-shrink: 0;
+            border-bottom: 1px solid #e2e8f0; height: 55px; flex-shrink: 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         .top-nav h1 { font-size: 0.9rem; margin: 0; color: #1e293b; font-weight: 800; text-transform: uppercase; }
-        .select-group { display: flex; align-items: center; gap: 15px; }
-        .select-wrapper { display: flex; align-items: center; gap: 6px; }
-        label { font-size: 0.65rem; font-weight: 800; color: #64748b; }
+        .select-group { display: flex; align-items: center; gap: 12px; }
+        .select-wrapper { display: flex; flex-direction: column; }
+        label { font-size: 0.6rem; font-weight: 800; color: #64748b; margin-bottom: 1px; }
         select {
             padding: 4px 10px; border-radius: 6px; border: 2px solid #6366f1;
-            font-weight: 700; font-size: 0.8rem; outline: none; min-width: 180px;
-            background-color: #f8faff;
+            font-weight: 700; font-size: 0.8rem; outline: none; min-width: 150px;
+            background-color: #fff; color: #1e293b;
         }
+        
         .dashboard-main {
             flex: 1; display: flex; flex-direction: column;
-            padding: 8px; gap: 8px; height: calc(100vh - 50px);
+            padding: 8px; gap: 8px; overflow: hidden;
         }
-        .card {
-            background: white; border-radius: 12px; padding: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02); display: flex; flex-direction: column;
-        }
-        h3 { margin: 0 0 5px 0; font-size: 0.75rem; text-transform: uppercase; color: #475569; text-align: center; font-weight: 700; }
+
+        /* Default View Styles */
+        #defaultView { display: flex; flex-direction: column; gap: 8px; height: 100%; }
+        .bar-container { height: 42%; }
+        .pie-row { display: flex; gap: 8px; flex: 1; min-height: 0; }
         
-        .bar-container { height: 38%; flex-shrink: 0; }
-        .pie-row { flex: 1; display: flex; gap: 8px; min-height: 0; }
-        .pie-card { flex: 1; min-width: 0; }
-        .canvas-box { flex: 1; position: relative; width: 100%; height: 100%; min-height: 0; }
+        /* Agent Comparison View */
+        #agentView { display: none; height: 100%; width: 100%; }
+        .full-card { height: 100%; display: flex; flex-direction: column; }
+
+        .card {
+            background: white; border-radius: 10px; padding: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04); display: flex; flex-direction: column;
+        }
+        h3 { 
+            margin: 0 0 8px 0; font-size: 0.75rem; text-transform: uppercase; 
+            color: #475569; text-align: center; font-weight: 800; letter-spacing: 0.5px;
+            border-bottom: 1px solid #f1f5f9; padding-bottom: 5px;
+        }
+        .canvas-box { flex: 1; position: relative; width: 100%; min-height: 0; }
         
         .no-data { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
     </style>
@@ -51,16 +63,16 @@
 <body>
 
 <div class="top-nav">
-    <h1>Stats Analytics</h1>
+    <h1>Analytics Dashboard</h1>
     <div class="select-group">
         <div class="select-wrapper">
-            <label>USER (FOS):</label>
+            <label>USER (FOS)</label>
             <select id="userSelect" onchange="handleUserChange()">
-                <!-- Users will load here -->
+                <option value="ALL">All Users</option>
             </select>
         </div>
         <div class="select-wrapper">
-            <label>CITY:</label>
+            <label>CITY</label>
             <select id="citySelect" onchange="updateDashboard()">
                 <option value="ALL">All Cities</option>
             </select>
@@ -69,37 +81,63 @@
 </div>
 
 <div id="mainUI" class="dashboard-main">
-    <div class="card bar-container">
-        <h3>Campaigns by City</h3>
-        <div class="canvas-box">
-            <canvas id="cityChart"></canvas>
+    <!-- View 1: Default (All Cities) -->
+    <div id="defaultView">
+        <div class="card bar-container">
+            <h3>Projects Distribution by City</h3>
+            <div class="canvas-box">
+                <canvas id="cityChart"></canvas>
+            </div>
+        </div>
+        <div class="pie-row">
+            <div class="card" style="flex:1">
+                <h3>CPL Status</h3>
+                <div class="canvas-box">
+                    <canvas id="cplChart"></canvas>
+                </div>
+            </div>
+            <div class="card" style="flex:1">
+                <h3>Qualification Status</h3>
+                <div class="canvas-box">
+                    <canvas id="qualChart"></canvas>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="pie-row">
-        <div class="card pie-card">
-            <h3>CPL Status</h3>
-            <div class="canvas-box">
-                <canvas id="cplChart"></canvas>
-            </div>
-        </div>
-        <div class="card pie-card">
-            <h3>Qualification Status</h3>
-            <div class="canvas-box">
-                <canvas id="qualChart"></canvas>
-            </div>
+
+    <!-- View 2: Agent Detailed View (When City Selected) -->
+    <div id="agentView" class="card full-card">
+        <h3 id="agentTitle">Agent-wise Stats</h3>
+        <div class="canvas-box">
+            <canvas id="agentComparisonChart"></canvas>
         </div>
     </div>
 </div>
 
 <div id="noDataMsg" class="no-data" style="display:none;">
-    <h2>No Data Found!</h2>
-    <p>Please filter data on the main dashboard and click STATS.</p>
+    <h2>No Data Available</h2>
+    <p>Please check your filters and try again.</p>
 </div>
 
 <script>
     let masterFilteredRows = [];
     let charts = {};
     Chart.register(ChartDataLabels);
+
+    // COLOR CODES AS REQUESTED
+    const colorPalette = {
+        cpl: { 
+            high: '#ef4444', // Red
+            ok: '#22c55e',   // Green
+            nc: '#78350f'    // Brown
+        },
+        qual: { 
+            low: '#ef4444',    // Red
+            ok: '#86efac',     // Light Green
+            good: '#15803d',   // Dark Green
+            nc: '#78350f'      // Brown
+        }
+    };
 
     function loadData() {
         const raw = localStorage.getItem('filtered_stats_data');
@@ -110,138 +148,159 @@
         }
 
         masterFilteredRows = JSON.parse(raw);
-        
-        // Load All Unique Users first
         const users = [...new Set(masterFilteredRows.map(r => r[21]).filter(Boolean))].sort();
         const uSelect = document.getElementById('userSelect');
-        
         users.forEach(u => uSelect.add(new Option(u, u)));
-
-        // Select the first user by default and update city dropdown
-        if (users.length > 0) {
-            handleUserChange();
-        }
+        handleUserChange();
     }
 
-    // This function runs whenever the USER changes
     function handleUserChange() {
         const selectedUser = document.getElementById('userSelect').value;
         const cSelect = document.getElementById('citySelect');
-        
-        // Clear current cities (keep only "All Cities")
+        const currentCity = cSelect.value;
         cSelect.innerHTML = '<option value="ALL">All Cities</option>';
 
-        // Find unique cities ONLY for this selected user
-        const userCities = [...new Set(
-            masterFilteredRows
-                .filter(r => r[21] === selectedUser)
-                .map(r => r[23])
-                .filter(Boolean)
-        )].sort();
+        const filtered = (selectedUser === "ALL") 
+            ? masterFilteredRows 
+            : masterFilteredRows.filter(r => r[21] === selectedUser);
 
-        userCities.forEach(c => cSelect.add(new Option(c, c)));
-
-        // Update the charts
+        const cities = [...new Set(filtered.map(r => r[23]).filter(Boolean))].sort();
+        cities.forEach(c => cSelect.add(new Option(c, c)));
+        if ([...cSelect.options].some(o => o.value === currentCity)) cSelect.value = currentCity;
         updateDashboard();
     }
 
     function updateDashboard() {
-        const selectedUser = document.getElementById('userSelect').value;
-        const selectedCity = document.getElementById('citySelect').value;
+        const user = document.getElementById('userSelect').value;
+        const city = document.getElementById('citySelect').value;
+        const defaultView = document.getElementById('defaultView');
+        const agentView = document.getElementById('agentView');
 
-        // Apply filters
-        let finalRows = masterFilteredRows.filter(row => {
-            const userMatch = (row[21] === selectedUser);
-            const cityMatch = (selectedCity === "ALL" || row[23] === selectedCity);
-            return userMatch && cityMatch;
+        let rows = masterFilteredRows.filter(r => {
+            return (user === "ALL" || r[21] === user) && (city === "ALL" || r[23] === city);
         });
 
-        if (finalRows.length === 0) {
-            clearCharts();
-            return;
+        if (city === "ALL") {
+            defaultView.style.display = 'flex';
+            agentView.style.display = 'none';
+            renderGlobalCharts(rows);
+        } else {
+            defaultView.style.display = 'none';
+            agentView.style.display = 'flex';
+            // UPDATE HEADER WITH TOTAL COUNT
+            document.getElementById('agentTitle').innerText = `Stats for ${city} - Total ${rows.length} Projects`;
+            renderAgentCharts(rows);
         }
-
-        const stats = {
-            cities: {},
-            cpl: { high: 0, low: 0, ok: 0, notCalc: 0 },
-            qual: { good: 0, ok: 0, low: 0, notCalc: 0 }
-        };
-
-        finalRows.forEach(row => {
-            const city = row[23] || "Unknown";
-            const cpl = (row[17] || "").toUpperCase();
-            const q = (row[18] || "").toUpperCase();
-
-            stats.cities[city] = (stats.cities[city] || 0) + 1;
-
-            if (cpl.includes("HIGH")) stats.cpl.high++;
-            else if (cpl.includes("LOW")) stats.cpl.low++;
-            else if (cpl.includes("OK")) stats.cpl.ok++;
-            else stats.cpl.notCalc++;
-
-            if (q.includes("GOOD")) stats.qual.good++;
-            else if (q.includes("OK")) stats.qual.ok++;
-            else if (q.includes("LOW")) stats.qual.low++;
-            else stats.qual.notCalc++;
-        });
-
-        renderCityChart(stats.cities);
-        renderPie('cplChart', [stats.cpl.high, stats.cpl.low, stats.cpl.ok, stats.cpl.notCalc], 
-                  ['High', 'Low', 'OK', 'N/C'], ['#ef4444', '#22c55e', '#3b82f6', '#94a3b8']);
-        
-        renderPie('qualChart', [stats.qual.good, stats.qual.ok, stats.qual.low, stats.qual.notCalc], 
-                  ['Good', 'OK', 'Low', 'N/C'], ['#166534', '#dcfce7', '#ef4444', '#94a3b8']);
     }
 
-    function renderCityChart(cityObj) {
-        const ctx = document.getElementById('cityChart').getContext('2d');
-        const labels = Object.keys(cityObj).sort((a,b) => cityObj[b] - cityObj[a]);
-        const data = labels.map(l => cityObj[l]);
+    function renderGlobalCharts(rows) {
+        const stats = { cities: {}, cpl: {h:0, o:0, n:0}, qual: {g:0, o:0, l:0, n:0} };
+        rows.forEach(r => {
+            const cityName = r[23] || "N/A";
+            stats.cities[cityName] = (stats.cities[cityName] || 0) + 1;
+            
+            const cp = (r[17] || "").toUpperCase();
+            if (cp.includes("HIGH")) stats.cpl.h++;
+            else if (cp.includes("OK") || cp.includes("LOW")) stats.cpl.o++; // Mapping Low to OK for 3-color CPL
+            else stats.cpl.n++;
 
-        if(charts.city) charts.city.destroy();
-        charts.city = new Chart(ctx, {
+            const q = (r[18] || "").toUpperCase();
+            if (q.includes("GOOD")) stats.qual.g++;
+            else if (q.includes("OK")) stats.qual.o++;
+            else if (q.includes("LOW")) stats.qual.l++;
+            else stats.qual.n++;
+        });
+
+        const sortedCityLabels = Object.keys(stats.cities).sort((a,b) => stats.cities[b] - stats.cities[a]);
+        renderBar('cityChart', sortedCityLabels, sortedCityLabels.map(l => stats.cities[l]));
+        
+        renderPie('cplChart', [stats.cpl.h, stats.cpl.o, stats.cpl.n], 
+                  ['High', 'OK', 'N/C'], [colorPalette.cpl.high, colorPalette.cpl.ok, colorPalette.cpl.nc]);
+        
+        renderPie('qualChart', [stats.qual.g, stats.qual.o, stats.qual.l, stats.qual.n], 
+                  ['Good', 'OK', 'Low', 'N/C'], [colorPalette.qual.good, colorPalette.qual.ok, colorPalette.qual.low, colorPalette.qual.nc]);
+    }
+
+    function renderAgentCharts(rows) {
+        const agents = {};
+        rows.forEach(r => {
+            const name = r[21] || "Unnamed";
+            if (!agents[name]) agents[name] = { total:0, cpl:{h:0, o:0, n:0}, qual:{g:0, o:0, l:0, n:0} };
+            agents[name].total++;
+            
+            const cp = (r[17] || "").toUpperCase();
+            if (cp.includes("HIGH")) agents[name].cpl.h++;
+            else if (cp.includes("OK") || cp.includes("LOW")) agents[name].cpl.o++;
+            else agents[name].cpl.n++;
+
+            const q = (r[18] || "").toUpperCase();
+            if (q.includes("GOOD")) agents[name].qual.g++;
+            else if (q.includes("OK")) agents[name].qual.o++;
+            else if (q.includes("LOW")) agents[name].qual.l++;
+            else agents[name].qual.n++;
+        });
+
+        // SORT HIGHEST TO LOWEST
+        const sortedAgents = Object.keys(agents).sort((a,b) => agents[b].total - agents[a].total);
+
+        const ds = [
+            { label: 'CPL: High', data: sortedAgents.map(l => agents[l].cpl.h), backgroundColor: colorPalette.cpl.high, stack: 'CPL' },
+            { label: 'CPL: OK', data: sortedAgents.map(l => agents[l].cpl.o), backgroundColor: colorPalette.cpl.ok, stack: 'CPL' },
+            { label: 'CPL: N/C', data: sortedAgents.map(l => agents[l].cpl.n), backgroundColor: colorPalette.cpl.nc, stack: 'CPL' },
+            
+            { label: 'Q: Good', data: sortedAgents.map(l => agents[l].qual.g), backgroundColor: colorPalette.qual.good, stack: 'QUAL' },
+            { label: 'Q: OK', data: sortedAgents.map(l => agents[l].qual.o), backgroundColor: colorPalette.qual.ok, stack: 'QUAL' },
+            { label: 'Q: Low', data: sortedAgents.map(l => agents[l].qual.l), backgroundColor: colorPalette.qual.low, stack: 'QUAL' },
+            { label: 'Q: N/C', data: sortedAgents.map(l => agents[l].qual.n), backgroundColor: colorPalette.qual.nc, stack: 'QUAL' }
+        ];
+
+        const ctx = document.getElementById('agentComparisonChart').getContext('2d');
+        if (charts.agent) charts.agent.destroy();
+        charts.agent = new Chart(ctx, {
             type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{ data: data, backgroundColor: '#6366f1', borderRadius: 4, barThickness: 35 }]
-            },
-            options: { 
+            data: { labels: sortedAgents, datasets: ds },
+            options: {
                 responsive: true, maintainAspectRatio: false,
-                plugins: { 
-                    legend: { display: false }, 
-                    datalabels: { anchor: 'end', align: 'top', font: { size: 10, weight: 'bold' }, color: '#6366f1' } 
-                },
-                scales: { 
-                    x: { grid: { display: false }, ticks: { font: { size: 9, weight: 'bold' } } }, 
-                    y: { beginAtZero: true, ticks: { font: { size: 8 }, stepSize: 1 } } 
+                scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } },
+                plugins: {
+                    legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9, weight: 'bold' } } },
+                    datalabels: { color: '#fff', font: { size: 10, weight: 'bold' }, formatter: v => v > 0 ? v : '' }
                 }
             }
         });
     }
 
-    function renderPie(id, dataValues, labels, colors) {
+    function renderBar(id, labels, data) {
         const ctx = document.getElementById(id).getContext('2d');
-        const total = dataValues.reduce((a, b) => a + b, 0);
+        if(charts[id]) charts[id].destroy();
+        charts[id] = new Chart(ctx, {
+            type: 'bar',
+            data: { labels: labels, datasets: [{ data: data, backgroundColor: '#6366f1', borderRadius: 4 }] },
+            options: { 
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'top', color: '#6366f1', font: { weight: 'bold' } } },
+                scales: { y: { beginAtZero: true }, x: { grid: { display: false } } }
+            }
+        });
+    }
+
+    function renderPie(id, data, labels, colors) {
+        const ctx = document.getElementById(id).getContext('2d');
         if(charts[id]) charts[id].destroy();
         charts[id] = new Chart(ctx, {
             type: 'doughnut',
-            data: { labels: labels, datasets: [{ data: dataValues, backgroundColor: colors, borderWidth: 2, borderColor: '#fff' }] },
+            data: { labels: labels, datasets: [{ data: data, backgroundColor: colors }] },
             options: {
-                responsive: true, maintainAspectRatio: false, cutout: '65%',
+                responsive: true, maintainAspectRatio: false, cutout: '55%',
                 plugins: {
-                    legend: { position: 'bottom', labels: { boxWidth: 8, font: { size: 9 }, padding: 5 } },
-                    datalabels: { 
-                        color: (context) => (context.dataset.data[context.dataIndex] > 0 ? '#fff' : 'transparent'),
-                        font: { weight: 'bold', size: 9 }, 
-                        formatter: (val) => val === 0 ? null : val + " (" + ((val/total)*100).toFixed(0) + "%)" 
-                    }
+                    legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9, weight: '700' } } },
+                    datalabels: { color: '#fff', font: { weight: 'bold', size: 10 }, formatter: (v, c) => {
+                        let s = c.dataset.data.reduce((a, b) => a + b, 0);
+                        return v > 0 ? `${v}` : '';
+                    }}
                 }
             }
         });
-    }
-
-    function clearCharts() {
-        Object.values(charts).forEach(c => { if(c) c.destroy(); });
     }
 
     window.onload = loadData;
