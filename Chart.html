@@ -124,7 +124,7 @@
     let charts = {};
     Chart.register(ChartDataLabels);
 
-    // COLOR CODES AS REQUESTED
+    // COLOR CODES
     const colorPalette = {
         cpl: { 
             high: '#ef4444', // Red
@@ -187,7 +187,6 @@
         } else {
             defaultView.style.display = 'none';
             agentView.style.display = 'flex';
-            // UPDATE HEADER WITH TOTAL COUNT
             document.getElementById('agentTitle').innerText = `Stats for ${city} - Total ${rows.length} Projects`;
             renderAgentCharts(rows);
         }
@@ -201,7 +200,7 @@
             
             const cp = (r[17] || "").toUpperCase();
             if (cp.includes("HIGH")) stats.cpl.h++;
-            else if (cp.includes("OK") || cp.includes("LOW")) stats.cpl.o++; // Mapping Low to OK for 3-color CPL
+            else if (cp.includes("OK") || cp.includes("LOW")) stats.cpl.o++;
             else stats.cpl.n++;
 
             const q = (r[18] || "").toUpperCase();
@@ -240,7 +239,6 @@
             else agents[name].qual.n++;
         });
 
-        // SORT HIGHEST TO LOWEST
         const sortedAgents = Object.keys(agents).sort((a,b) => agents[b].total - agents[a].total);
 
         const ds = [
@@ -294,10 +292,15 @@
                 responsive: true, maintainAspectRatio: false, cutout: '55%',
                 plugins: {
                     legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9, weight: '700' } } },
-                    datalabels: { color: '#fff', font: { weight: 'bold', size: 10 }, formatter: (v, c) => {
-                        let s = c.dataset.data.reduce((a, b) => a + b, 0);
-                        return v > 0 ? `${v}` : '';
-                    }}
+                    datalabels: { 
+                        color: '#fff', 
+                        font: { weight: 'bold', size: 10 }, 
+                        formatter: (val, ctx) => {
+                            let sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                            let percentage = Math.round((val / sum) * 100) + "%";
+                            return val > 0 ? `${val} (${percentage})` : '';
+                        }
+                    }
                 }
             }
         });
