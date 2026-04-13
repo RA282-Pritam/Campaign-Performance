@@ -37,12 +37,10 @@
             padding: 8px; gap: 8px; overflow: hidden;
         }
 
-        /* Default View Styles */
         #defaultView { display: flex; flex-direction: column; gap: 8px; height: 100%; }
         .bar-container { height: 42%; }
         .pie-row { display: flex; gap: 8px; flex: 1; min-height: 0; }
         
-        /* Agent Comparison View */
         #agentView { display: none; height: 100%; width: 100%; }
         .full-card { height: 100%; display: flex; flex-direction: column; }
 
@@ -56,7 +54,6 @@
             border-bottom: 1px solid #f1f5f9; padding-bottom: 5px;
         }
         .canvas-box { flex: 1; position: relative; width: 100%; min-height: 0; }
-        
         .no-data { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
     </style>
 </head>
@@ -81,10 +78,9 @@
 </div>
 
 <div id="mainUI" class="dashboard-main">
-    <!-- View 1: Default (All Cities) -->
     <div id="defaultView">
         <div class="card bar-container">
-            <h3>Projects Distribution by City</h3>
+            <h3 id="barTitle">Projects Distribution by City</h3>
             <div class="canvas-box">
                 <canvas id="cityChart"></canvas>
             </div>
@@ -105,7 +101,6 @@
         </div>
     </div>
 
-    <!-- View 2: Agent Detailed View (When City Selected) -->
     <div id="agentView" class="card full-card">
         <h3 id="agentTitle">Agent-wise Stats</h3>
         <div class="canvas-box">
@@ -124,19 +119,9 @@
     let charts = {};
     Chart.register(ChartDataLabels);
 
-    // COLOR CODES
     const colorPalette = {
-        cpl: { 
-            high: '#ef4444', // Red
-            ok: '#22c55e',   // Green
-            nc: '#78350f'    // Brown
-        },
-        qual: { 
-            low: '#ef4444',    // Red
-            ok: '#86efac',     // Light Green
-            good: '#15803d',   // Dark Green
-            nc: '#78350f'      // Brown
-        }
+        cpl: { high: '#ef4444', ok: '#22c55e', nc: '#78350f' },
+        qual: { low: '#ef4444', ok: '#86efac', good: '#15803d', nc: '#78350f' }
     };
 
     function loadData() {
@@ -180,11 +165,18 @@
             return (user === "ALL" || r[21] === user) && (city === "ALL" || r[23] === city);
         });
 
-        if (city === "ALL") {
+        // CONDITION: If City is 'ALL' OR a specific User is selected, show the 3-chart layout (Image view)
+        if (city === "ALL" || user !== "ALL") {
             defaultView.style.display = 'flex';
             agentView.style.display = 'none';
+            
+            // Update Bar Chart Title dynamically
+            const barTitle = document.getElementById('barTitle');
+            barTitle.innerText = (city === "ALL") ? "Projects Distribution by City" : `Project Distribution for ${city}`;
+            
             renderGlobalCharts(rows);
         } else {
+            // Only show Stacked Comparison Chart if City is selected but User is "ALL"
             defaultView.style.display = 'none';
             agentView.style.display = 'flex';
             document.getElementById('agentTitle').innerText = `Stats for ${city} - Total ${rows.length} Projects`;
@@ -245,7 +237,6 @@
             { label: 'CPL: High', data: sortedAgents.map(l => agents[l].cpl.h), backgroundColor: colorPalette.cpl.high, stack: 'CPL' },
             { label: 'CPL: OK', data: sortedAgents.map(l => agents[l].cpl.o), backgroundColor: colorPalette.cpl.ok, stack: 'CPL' },
             { label: 'CPL: N/C', data: sortedAgents.map(l => agents[l].cpl.n), backgroundColor: colorPalette.cpl.nc, stack: 'CPL' },
-            
             { label: 'Q: Good', data: sortedAgents.map(l => agents[l].qual.g), backgroundColor: colorPalette.qual.good, stack: 'QUAL' },
             { label: 'Q: OK', data: sortedAgents.map(l => agents[l].qual.o), backgroundColor: colorPalette.qual.ok, stack: 'QUAL' },
             { label: 'Q: Low', data: sortedAgents.map(l => agents[l].qual.l), backgroundColor: colorPalette.qual.low, stack: 'QUAL' },
@@ -297,7 +288,7 @@
                         font: { weight: 'bold', size: 10 }, 
                         formatter: (val, ctx) => {
                             let sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
-                            let percentage = Math.round((val / sum) * 100) + "%";
+                            let percentage = sum > 0 ? Math.round((val / sum) * 100) + "%" : "0%";
                             return val > 0 ? `${val} (${percentage})` : '';
                         }
                     }
