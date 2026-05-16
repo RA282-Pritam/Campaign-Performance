@@ -110,7 +110,7 @@
         
         .summary-title { font-size: 10px; font-weight: 800; color: var(--dark-header); text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; display: flex; align-items: center; gap: 6px; }
         .summary-grid { display: grid; gap: 10px; }
-        .grid-9 { grid-template-columns: repeat(9, 1fr); } /* Increased to 9 columns */
+        .grid-9 { grid-template-columns: repeat(9, 1fr); } 
         .grid-3 { grid-template-columns: repeat(3, 1fr); }
         
         .summary-tile { text-align: center; border-right: 1px solid #f1f5f9; }
@@ -119,13 +119,23 @@
         .tile-value { font-size: 14px; font-weight: 800; color: var(--brand-blue); }
         .val-over { color: #dc2626; }
         .val-under { color: #16a34a; }
-        .val-rem { color: #0ea5e9; } /* Color for remaining */
+        .val-rem { color: #0ea5e9; } 
 
-        /* SUMMARY TABLE STYLE */
+        /* SUMMARY TABLE STYLE - PIVOT */
         .all-mgr-table { width: 100%; border-collapse: collapse; font-size: 11px; }
         .all-mgr-table th { background: #f8fafc; color: #64748b; text-align: left; padding: 6px; border-bottom: 2px solid #e2e8f0; text-transform: uppercase; font-size: 9px; }
         .all-mgr-table td { padding: 6px; border-bottom: 1px solid #f1f5f9; font-weight: 700; color: #334155; }
         .all-mgr-table tr:hover { background-color: #fcfcfc; }
+        
+        .btn-pivot-toggle { 
+            background: #e2e8f0; border: none; font-family: monospace; font-weight: bold; 
+            width: 18px; height: 18px; line-height: 16px; text-align: center; 
+            border-radius: 3px; cursor: pointer; margin-right: 6px; font-size: 12px;
+        }
+        .row-tl { background-color: #f8fafc; display: none; }
+        .row-fos { background-color: #ffffff; display: none; }
+        .indent-1 { padding-left: 25px !important; }
+        .indent-2 { padding-left: 50px !important; }
 
         /* TABLE CONTAINER & STICKY LOGIC */
         .table-container { background: #fff; border-radius: 0 6px 6px 6px; border: 1px solid var(--border-color); height: 500px; overflow: auto; position: relative; }
@@ -298,14 +308,14 @@
                 </div>
             </div>
 
-            <!-- All Managers Global Table -->
+            <!-- All Managers Global Table - PIVOT ENABLED -->
             <div class="summary-card full-width" id="all-managers-overview">
-                <div class="summary-title">🌐 Performance Overview</div>
+                <div class="summary-title">🌐 Performance Overview (Manager > TL > FOS)</div>
                 <div style="overflow-x: auto;">
-                    <table class="all-mgr-table">
+                    <table class="all-mgr-table" id="pivotSummaryTable">
                         <thead>
                             <tr>
-                                <th>Manager Name</th>
+                                <th>Name / Entity</th>
                                 <th>Projects</th>
                                 <th>Uniq. Camp</th>
                                 <th>Total Budget</th>
@@ -465,6 +475,54 @@ $(document).ready(function() {
     document.getElementById('excelUpload').addEventListener('change', handleFile, false);
 });
 
+// Helper for aggregation
+function initMetricObj() {
+    return { p: 0, camp: new Set(), b: 0, s: 0, lt: 0, ld: 0, qt: 0, qd: 0, over: 0, under: 0 };
+}
+
+function updateMetricObj(obj, row) {
+    let b = parseFloat(row[6]) || 0;
+    let s = parseFloat(row[7]) || 0;
+    obj.p++;
+    if(row[2]) obj.camp.add(row[2]);
+    obj.b += b;
+    obj.s += s;
+    obj.lt += parseFloat(row[9]) || 0;
+    obj.ld += parseFloat(row[10]) || 0;
+    obj.qt += parseFloat(row[29]) || 0;
+    obj.qd += parseFloat(row[13]) || 0;
+    if (s > b) obj.over++; else obj.under++;
+}
+
+// Global Pivot Toggle Function
+window.togglePivot = function(type, id) {
+    const btn = event.currentTarget;
+    const isExpanded = btn.innerText === '−';
+    btn.innerText = isExpanded ? '+' : '−';
+    
+    if (type === 'mgr') {
+        const tlRows = document.querySelectorAll(`.row-tl[data-mgr-id="${id}"]`);
+        tlRows.forEach(row => {
+            if (isExpanded) {
+                row.style.display = 'none';
+                // Also hide children FOS if hidden
+                const mgr_tl_id = row.getAttribute('data-tl-id');
+                const fosRows = document.querySelectorAll(`.row-fos[data-mgr-tl-id="${mgr_tl_id}"]`);
+                fosRows.forEach(f => f.style.display = 'none');
+                const tlBtn = row.querySelector('.btn-pivot-toggle');
+                if(tlBtn) tlBtn.innerText = '+';
+            } else {
+                row.style.display = 'table-row';
+            }
+        });
+    } else if (type === 'tl') {
+        const fosRows = document.querySelectorAll(`.row-fos[data-mgr-tl-id="${id}"]`);
+        fosRows.forEach(row => {
+            row.style.display = isExpanded ? 'none' : 'table-row';
+        });
+    }
+};
+
 function refreshAllCharts() {
     const visibleData = table.rows({ search: 'applied' }).data().toArray();
     const summaryContainer = document.getElementById('managerSummary');
@@ -519,41 +577,42 @@ function refreshAllCharts() {
             individualSpending.style.display = 'none';
             allManagersOverview.style.display = 'block';
 
-            let mgrGroup = {};
+            // Pivot Grouping Structure
+            let tree = {};
             visibleData.forEach(row => {
                 let mgr = row[28] || "Unassigned";
-                if (!mgrGroup[mgr]) mgrGroup[mgr] = { p: 0, camp: new Set(), b: 0, s: 0, lt: 0, ld: 0, qt: 0, qd: 0, over: 0, under: 0 };
-                let b = parseFloat(row[6]) || 0;
-                let s = parseFloat(row[7]) || 0;
-                mgrGroup[mgr].p++;
-                if(row[2]) mgrGroup[mgr].camp.add(row[2]);
-                mgrGroup[mgr].b += b;
-                mgrGroup[mgr].s += s;
-                mgrGroup[mgr].lt += parseFloat(row[9]) || 0;
-                mgrGroup[mgr].ld += parseFloat(row[10]) || 0;
-                mgrGroup[mgr].qt += parseFloat(row[29]) || 0;
-                mgrGroup[mgr].qd += parseFloat(row[13]) || 0;
-                if (s > b) mgrGroup[mgr].over++; else mgrGroup[mgr].under++;
+                let tl = row[24] || "No TL";
+                let fos = row[23] || "No FOS";
+                
+                if (!tree[mgr]) tree[mgr] = { m: initMetricObj(), tls: {} };
+                if (!tree[mgr].tls[tl]) tree[mgr].tls[tl] = { m: initMetricObj(), foss: {} };
+                if (!tree[mgr].tls[tl].foss[fos]) tree[mgr].tls[tl].foss[fos] = { m: initMetricObj() };
+                
+                updateMetricObj(tree[mgr].m, row);
+                updateMetricObj(tree[mgr].tls[tl].m, row);
+                updateMetricObj(tree[mgr].tls[tl].foss[fos].m, row);
             });
 
             let html = "";
-            Object.keys(mgrGroup).sort().forEach(m => {
-                let d = mgrGroup[m];
-                let rem = d.b - d.s;
-                html += `<tr>
-                    <td style="color:var(--brand-blue)">${m}</td>
-                    <td>${d.p}</td>
-                    <td style="color:#6366f1;">${d.camp.size}</td>
-                    <td>₹${Math.round(d.b).toLocaleString('en-IN')}</td>
-                    <td>₹${Math.round(d.s).toLocaleString('en-IN')}</td>
-                    <td class="val-rem">₹${Math.round(rem).toLocaleString('en-IN')}</td>
-                    <td>${Math.round(d.lt).toLocaleString()}</td>
-                    <td>${Math.round(d.ld).toLocaleString()}</td>
-                    <td>${Math.round(d.qt).toLocaleString()}</td>
-                    <td>${Math.round(d.qd).toLocaleString()}</td>
-                    <td class="val-over">${d.over}</td>
-                    <td class="val-under">${d.under}</td>
-                </tr>`;
+            let mIdx = 0;
+            Object.keys(tree).sort().forEach(mgr => {
+                mIdx++;
+                let d = tree[mgr].m;
+                let mId = `mgr-${mIdx}`;
+                html += renderPivotRow(mgr, d, 'mgr', mId, '');
+
+                let tIdx = 0;
+                Object.keys(tree[mgr].tls).sort().forEach(tl => {
+                    tIdx++;
+                    let td = tree[mgr].tls[tl].m;
+                    let tlId = `${mId}-tl-${tIdx}`;
+                    html += renderPivotRow(tl, td, 'tl', tlId, mId);
+
+                    Object.keys(tree[mgr].tls[tl].foss).sort().forEach(fos => {
+                        let fd = tree[mgr].tls[tl].foss[fos].m;
+                        html += renderPivotRow(fos, fd, 'fos', '', tlId);
+                    });
+                });
             });
             document.getElementById('all-mgr-summary-body').innerHTML = html;
         }
@@ -561,6 +620,7 @@ function refreshAllCharts() {
         summaryContainer.style.display = 'none';
     }
 
+    // Charts update logic
     if (visibleData.length === 0) {
         if (myGroupedChart) myGroupedChart.destroy();
         if (cplPieChart) cplPieChart.destroy();
@@ -633,6 +693,34 @@ function refreshAllCharts() {
     });
 }
 
+function renderPivotRow(name, d, type, id, parentId) {
+    let rem = d.b - d.s;
+    let rowClass = type === 'mgr' ? 'row-mgr' : (type === 'tl' ? 'row-tl' : 'row-fos');
+    let indentClass = type === 'tl' ? 'indent-1' : (type === 'fos' ? 'indent-2' : '');
+    let attr = "";
+    if (type === 'tl') attr = `data-mgr-id="${parentId}" data-tl-id="${id}"`;
+    if (type === 'fos') attr = `data-mgr-tl-id="${parentId}"`;
+    
+    let toggleBtn = (type !== 'fos') ? `<button class="btn-pivot-toggle" onclick="togglePivot('${type}', '${id}')">+</button>` : '';
+    let nameStyle = type === 'mgr' ? 'color:var(--brand-blue)' : (type === 'tl' ? 'color:var(--stats-purple)' : 'color:#64748b; font-weight:500;');
+
+    return `<tr class="${rowClass}" ${attr}>
+        <td class="${indentClass}" style="${nameStyle}">${toggleBtn}${name}</td>
+        <td>${d.p}</td>
+        <td style="color:#6366f1;">${d.camp.size}</td>
+        <td>₹${Math.round(d.b).toLocaleString('en-IN')}</td>
+        <td>₹${Math.round(d.s).toLocaleString('en-IN')}</td>
+        <td class="val-rem">₹${Math.round(rem).toLocaleString('en-IN')}</td>
+        <td>${Math.round(d.lt).toLocaleString()}</td>
+        <td>${Math.round(d.ld).toLocaleString()}</td>
+        <td>${Math.round(d.qt).toLocaleString()}</td>
+        <td>${Math.round(d.qd).toLocaleString()}</td>
+        <td class="val-over">${d.over}</td>
+        <td class="val-under">${d.under}</td>
+    </tr>`;
+}
+
+// Slicer functions (unchanged)
 function handleManagerChange(val) { activeFilters[28] = val; activeFilters[24] = ''; activeFilters[23] = ''; table.column(24).search(''); table.column(23).search(''); applySlicerFilter(28, val); }
 function handleTLChange(val) { activeFilters[23] = ''; table.column(23).search(''); applySlicerFilter(24, val); }
 function applySlicerFilter(colIdx, val) { activeFilters[colIdx] = val; const regexVal = val ? `^${val.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$` : ''; table.column(colIdx).search(regexVal, true, false).draw(); updateAllSlicers(); }
