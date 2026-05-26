@@ -22,6 +22,8 @@
             --stats-purple: #6366f1;
             --toggle-slate: #64748b;
             --footer-black: #1e293b; 
+            --google-green: #15803d;
+            --log-orange: #f59e0b;
         }
         
         body { 
@@ -64,6 +66,37 @@
         }
         .btn-whatsapp-small:hover { background: #16a34a; color: #fff; }
 
+        .btn-google-sheet {
+            background: var(--google-green);
+            border: 1px solid #166534;
+            color: #fff;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-family: 'Cambria', serif;
+            float: right;
+            margin-top: -2px;
+        }
+        .btn-google-sheet:hover { background: #166534; color: #fff; }
+
+        .btn-log {
+            background: var(--log-orange);
+            color: #fff;
+            border: none;
+            font-size: 8px;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-log:hover { opacity: 0.8; color: #fff; }
+
         .table-toolbar { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 2px; }
 
         .btn-toggle-table, .btn-toggle-charts { 
@@ -101,7 +134,6 @@
         .btn-slicer { border: 1px solid #e2e8f0; background: #f8fafc; font-size: 9px; padding: 2px 6px; border-radius: 3px; color: #475569; font-weight: 600; transition: all 0.2s; font-family: 'Cambria', serif; }
         .btn-slicer.active { background: var(--brand-blue) !important; color: #fff !important; border-color: var(--brand-blue) !important; }
 
-        /* SUMMARY CARDS STYLING */
         .summary-container { display: none; margin-top: 15px; width: 100%; gap: 12px; flex-wrap: wrap; }
         .summary-card { background: #fff; border-radius: 8px; border: 1px solid var(--border-color); padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .summary-card.main-metrics { flex: 2; min-width: 600px; }
@@ -121,11 +153,9 @@
         .val-under { color: #16a34a; }
         .val-rem { color: #0ea5e9; } 
 
-        /* SUMMARY TABLE STYLE - PIVOT */
         .all-mgr-table { width: 100%; border-collapse: collapse; font-size: 11px; }
         .all-mgr-table th { background: #f8fafc; color: #64748b; text-align: left; padding: 6px; border-bottom: 2px solid #e2e8f0; text-transform: uppercase; font-size: 9px; }
         .all-mgr-table td { padding: 6px; border-bottom: 1px solid #f1f5f9; font-weight: 700; color: #334155; }
-        .all-mgr-table tr:hover { background-color: #fcfcfc; }
         
         .btn-pivot-toggle { 
             background: #e2e8f0; border: none; font-family: monospace; font-weight: bold; 
@@ -137,11 +167,12 @@
         .indent-1 { padding-left: 25px !important; }
         .indent-2 { padding-left: 50px !important; }
 
-        /* TABLE CONTAINER & STICKY LOGIC */
         .table-container { background: #fff; border-radius: 0 6px 6px 6px; border: 1px solid var(--border-color); height: 500px; overflow: auto; position: relative; }
-        table.dataTable { table-layout: fixed !important; border-collapse: separate !important; border-spacing: 0 !important; width: 2000px !important; margin: 0 !important; }
-        table.dataTable thead th { position: sticky !important; top: 0 !important; z-index: 1050 !important; background-color: var(--dark-header) !important; color: #fff !important; font-size: 10px; padding: 4px 2px !important; border-bottom: 2px solid #1e293b !important; border-right: 1px solid #475569 !important; vertical-align: middle; text-align: center; }
+        table.dataTable { table-layout: fixed !important; border-collapse: separate !important; border-spacing: 0 !important; width: 2200px !important; margin: 0 !important; }
+        table.dataTable thead th { position: sticky !important; top: 0 !important; z-index: 1050 !important; background-color: var(--dark-header) !important; color: #fff !important; font-size: 10px; padding: 4px 5px !important; border-bottom: 2px solid #1e293b !important; border-right: 1px solid #475569 !important; vertical-align: middle; }
         table.dataTable tbody td { padding: 4px 8px !important; font-size: 11px; border: 1px solid #f1f5f9 !important; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; background-color: #fff; }
+        
+        table.dataTable tfoot th { background-color: #f8fafc !important; color: #1e293b !important; font-size: 10px; padding: 6px 8px !important; border-top: 2px solid var(--dark-header) !important; font-weight: 800; }
 
         table.dataTable tbody td:nth-child(1) { position: sticky !important; left: 0; z-index: 1020; background-color: #fff !important; }
         table.dataTable tbody td:nth-child(2) { position: sticky !important; left: 35px; z-index: 1020; background-color: #fff !important; }
@@ -156,8 +187,6 @@
         table.dataTable thead th:nth-child(4) { position: sticky !important; left: 140px; z-index: 1080 !important; }
         table.dataTable thead th:nth-child(5) { position: sticky !important; left: 270px; z-index: 1080 !important; }
         table.dataTable thead th:nth-child(6) { position: sticky !important; left: 400px; z-index: 1080 !important; }
-
-        table.dataTable tfoot th { position: sticky !important; bottom: 0 !important; z-index: 1050 !important; background-color: var(--footer-black) !important; height: 8px !important; padding: 0 !important; border-top: 2px solid #0f172a !important; border-right: none !important; }
 
         .badge-pill { padding: 2px 4px; border-radius: 3px; font-size: 9px; font-weight: 700; display: inline-block; text-align: center; min-width: 60px; text-transform: uppercase; }
         .status-ok { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
@@ -175,6 +204,18 @@
         .dot-blue { background-color: #3b82f6; }
         @keyframes blinker { 50% { opacity: 0; } }
 
+        .comment-box {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 3px;
+            font-size: 10px;
+            padding: 3px 5px;
+            font-family: 'Cambria', serif;
+            color: #1e293b;
+            background: #fff;
+            display: block;
+        }
+
         .campaign-link { color: var(--brand-blue); font-weight: 700; text-decoration: none; }
         .dataTables_paginate, .dataTables_length, .dataTables_info { display: none !important; }
         ::-webkit-scrollbar { width: 5px; height: 6px; }
@@ -182,6 +223,55 @@
 
         .chart-section { background: #fff; margin-top: 20px; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .chart-header { font-weight: 800; font-size: 11px; color: var(--dark-header); text-transform: uppercase; margin-bottom: 10px; border-left: 3px solid var(--brand-blue); padding-left: 8px; }
+
+        #historyBody { 
+            font-family: 'Cambria', serif; 
+            max-height: 480px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f1f5f9;
+        }
+
+        .log-entry {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid var(--log-orange);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .log-date-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 4px;
+        }
+
+        .log-date-text {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--log-orange);
+            text-transform: uppercase;
+        }
+
+        .log-remark-text {
+            font-size: 12px;
+            color: #1e293b;
+            line-height: 1.4;
+            font-weight: 700;
+            word-wrap: break-word;
+        }
+
+        .log-footer-tag {
+            font-size: 8px;
+            color: #94a3b8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
@@ -240,7 +330,7 @@
             <span id="toggle-chart-icon">−</span> HIDE/SHOW CHARTS
         </button>
         <button class="btn-download-table" onclick="downloadExcel()" title="Download Filtered Excel">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.10 0 1 0-.708.708l3 3z"/></svg>
             DOWNLOAD TABLE
         </button>
         <div class="project-status-filter">
@@ -280,9 +370,7 @@
             </div>
         </div>
 
-        <!-- SUMMARY CARDS SECTION -->
         <div class="summary-container" id="managerSummary">
-            <!-- Single Manager Individual Card -->
             <div class="summary-card main-metrics" id="individual-mgr-metrics" style="display:none;">
                 <div class="summary-title">📊 Manager Performance Summary</div>
                 <div class="summary-grid grid-9">
@@ -298,7 +386,6 @@
                 </div>
             </div>
             
-            <!-- Spending Analysis Card -->
             <div class="summary-card spending-metrics" id="individual-mgr-spending" style="display:none;">
                 <div class="summary-title">📉 Spending Analysis</div>
                 <div class="summary-grid grid-3">
@@ -308,7 +395,6 @@
                 </div>
             </div>
 
-            <!-- All Managers Global Table - PIVOT ENABLED -->
             <div class="summary-card full-width" id="all-managers-overview">
                 <div class="summary-title">🌐 Performance Overview (Manager > TL > FOS)</div>
                 <div style="overflow-x: auto;">
@@ -337,7 +423,22 @@
     </div>
 </div>
 
+<!-- History Modal -->
+<div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+      <div class="modal-header py-2" style="background: var(--dark-header); color: #fff; border-bottom: none;">
+        <h6 class="modal-title" style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Remark History Log</h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="font-size: 10px;"></button>
+      </div>
+      <div class="modal-body" id="historyBody">
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -355,7 +456,7 @@ let qualPieChart = null;
 
 Chart.register(ChartDataLabels);
 
-const targetHeaders = ["S. NO", "DRR", "CAMPAIGN", "CLIENT NAME", "PROJECT NAME", "PLATFORM", "CREDIT ASSIGNED", "TOTAL CREDIT SPENT", "SHOULD WE HAVE SPENT", "CREDIT ASSIGNED FOR", "LEADS DELIVERED", "PENDING LEADS", "FEEDBACK RECEIVED", "LEADS QUALIFIED", "SV PROPOSED", "SV DONE", "TARGET CPL", "CURRENT CPL", "QUALIFICAITON", "CPL STATUS", "QUALIFICATION STATUS", "SPENDING ANALYSIS", "SPENT TYPE", "ASSIGNED USER", "TL NAME", "CITY", "MGR PHONE", "TL PHONE", "MKT MANAGER"];
+const targetHeaders = ["S. NO", "DRR", "CAMPAIGN", "CLIENT NAME", "PROJECT NAME", "PLATFORM", "CREDIT ASSIGNED", "TOTAL CREDIT SPENT", "SHOULD WE HAVE SPENT", "CREDIT ASSIGNED FOR", "LEADS DELIVERED", "PENDING LEADS", "FEEDBACK RECEIVED", "LEADS QUALIFIED", "SV PROPOSED", "SV DONE", "TARGET CPL", "CURRENT CPL", "QUALIFICAITON", "CPL STATUS", "QUALIFICATION STATUS", "SPENDING ANALYSIS", "SPENT TYPE", "ASSIGNED USER", "TL NAME", "CITY", "MGR PHONE", "TL PHONE", "MKT MANAGER", "REMARKS"];
 
 const barLabelsPlugin = {
     id: 'barLabelsPlugin',
@@ -400,8 +501,15 @@ $.fn.dataTable.ext.search.push(function(settings, data) {
 });
 
 $(document).ready(function() {
-    $('#tableHead').html("<tr>" + targetHeaders.map(h => `<th>${h}</th>`).join('') + "</tr>");
-    $('#tableFoot').html("<tr>" + targetHeaders.map(() => `<th></th>`).join('') + "</tr>");
+    const headerHtml = targetHeaders.map((h, i) => {
+        if (i === 29) {
+            return `<th style="min-width:180px;">${h} <button class="btn-google-sheet" onclick="sendToGoogleSheet()" title="Sync remarks to Sheet">🚀 SYNC</button></th>`;
+        }
+        return `<th>${h}</th>`;
+    }).join('');
+    
+    $('#tableHead').html("<tr>" + headerHtml + "</tr>");
+    $('#tableFoot').html("<tr>" + targetHeaders.map((h, i) => `<th id="foot-${i}"></th>`).join('') + "</tr>");
     
     table = $('#campaignTable').DataTable({
         "dom": 'frti', "paging": false, "ordering": true, "info": false, "autoWidth": false,
@@ -417,6 +525,7 @@ $(document).ready(function() {
             { "targets": [6, 10, 11, 13, 14, 15, 16, 17], "className": "dt-center", "width": "60px" },
             { "targets": [7, 8, 9, 12, 18, 19, 20], "className": "dt-center", "width": "85px" },
             { "targets": 25, "width": "100px" },
+            { "targets": 29, "width": "220px", "orderable": false }, 
             { 
                 "targets": 21, "width": "75px", "className": "dt-center",
                 "render": function(data, type, row) {
@@ -428,10 +537,29 @@ $(document).ready(function() {
                     if (type === 'display') return `<span class="badge-pill ${badgeClass}"><span class="dot ${dotClass}"></span>${status}</span>`;
                     return status;
                 }
+            },
+            {
+                "targets": 29, 
+                "render": function(data, type, row) {
+                    if (type === 'display') {
+                        let key = "rem_" + row[2] + "_" + (row[3] || "") + "_" + (row[4] || "") + "_" + (row[23] || "") + "_" + (row[5] || "");
+                        let savedVal = localStorage.getItem(key) || "";
+                        let historyRaw = data ? data.toString().replace(/'/g, "\\'") : "";
+                        
+                        return `
+                        <div class="d-flex align-items-center gap-1">
+                            <button class="btn-log" onclick="showLog('${historyRaw}')">LOG</button>
+                            <input type="text" class="comment-box" data-key="${key}" value="${savedVal}" placeholder="Remark..." onchange="saveComment(this)">
+                        </div>`;
+                    }
+                    return data;
+                }
             }
         ],
         "createdRow": function(row, data) {
-            $('td', row).each(function() { $(this).attr('title', $(this).text()); });
+            $('td', row).each(function(idx) { 
+                if(idx !== 29) $(this).attr('title', $(this).text()); 
+            });
             if (data[2]) {
                 const link = `https://leadmanager.automateleads.ai/page/campaign-details/${data[2]}`;
                 $('td:eq(2)', row).html(`<a href="${link}" target="_blank" class="campaign-link">${data[2]}</a>`);
@@ -445,6 +573,14 @@ $(document).ready(function() {
                     }
                 }
             });
+            
+            if (data[10] !== undefined) {
+                let delivered = parseFloat(data[10]) || 0;
+                let targetLeads = parseFloat(data[9]) || 0;
+                let perc = targetLeads > 0 ? Math.round((delivered / targetLeads) * 100) : 0;
+                $('td:eq(10)', row).html(`<span style="font-weight:700;">${delivered}</span> <small style="color:#64748b;">(${perc}%)</small>`);
+            }
+
             if (data[18] !== undefined && data[18] !== null && data[18] !== "") {
                 let val = parseFloat(data[18]);
                 if (!isNaN(val)) {
@@ -475,10 +611,131 @@ $(document).ready(function() {
     document.getElementById('excelUpload').addEventListener('change', handleFile, false);
 });
 
-// Helper for aggregation
-function initMetricObj() {
-    return { p: 0, camp: new Set(), b: 0, s: 0, lt: 0, ld: 0, qt: 0, qd: 0, over: 0, under: 0 };
+/**
+ * HELPER: Colorizes status keywords specifically for the Log Entry
+ */
+function applyStatusHighlight(text) {
+    if (!text) return "";
+    
+    // 1. Separate into parts if a "/" exists (CPL vs QL)
+    let segments = text.split('/');
+    
+    let colorizedSegments = segments.map(segment => {
+        let original = segment.trim();
+        let upper = original.toUpperCase();
+        
+        // RED logic: HIGH or LOW
+        if (upper.includes("HIGH") || upper.includes("LOW")) {
+            return `<span style="color: #dc2626; font-weight: 800;">${original}</span>`;
+        } 
+        // GREEN logic: OK or GOOD
+        else if (upper.includes("OK") || upper.includes("GOOD")) {
+            return `<span style="color: #16a34a; font-weight: 800;">${original}</span>`;
+        }
+        // DEFAULT logic: grey (Not Calculated / Not Received)
+        return `<span style="color: #64748b; font-weight: 500;">${original}</span>`;
+    });
+
+    return colorizedSegments.join(' <span style="color:#cbd5e1">/</span> ');
 }
+
+/**
+ * UPDATED showLog Function
+ */
+function showLog(rawText) {
+    const historyBody = document.getElementById('historyBody');
+    historyBody.innerHTML = ""; 
+
+    if (!rawText || rawText.trim() === "" || rawText === "undefined") {
+        historyBody.innerHTML = `<div class="text-center py-5"><p class="text-muted small fw-bold">NO SYNC HISTORY FOUND.</p></div>`;
+    } else {
+        // Splitting logic
+        let entries = rawText.split(/,(?=\s*\d{1,2}\/\d{1,2})|,(?=\s*\d{4})/).map(item => item.trim()).filter(item => item !== "");
+        
+        entries.forEach(entry => {
+            const regex = /^([\d/.-]+)\s*\((.*?)\)\s*-\s*(.*)$/;
+            const match = entry.match(regex);
+
+            let datePart, remarkPart, statusPart;
+
+            if (match) {
+                datePart = match[1];     
+                remarkPart = match[2];   
+                statusPart = match[3];   
+            } else {
+                datePart = "LOG";
+                remarkPart = entry;
+                statusPart = "UPDATED";
+            }
+
+            let entryDiv = document.createElement('div');
+            entryDiv.className = 'log-entry';
+            entryDiv.innerHTML = `
+                <div class="log-date-header">
+                    <span class="log-date-text">${datePart}</span>
+                    <span class="log-footer-tag">SYNCED ✓</span>
+                </div>
+                <div class="log-remark-text">
+                    ${applyStatusHighlight(statusPart)}
+                    <span style="color: #94a3b8; font-weight: 800; margin: 0 4px;">THEN</span>
+                    <span style="color: #334155; font-style: italic;">(${remarkPart})</span>
+                </div>
+            `;
+            historyBody.appendChild(entryDiv);
+        });
+    }
+
+    let modal = new bootstrap.Modal(document.getElementById('historyModal'));
+    modal.show();
+}
+
+function saveComment(el) {
+    let key = $(el).data('key');
+    let val = $(el).val();
+    localStorage.setItem(key, val);
+}
+
+async function sendToGoogleSheet() {
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbyS5AnQx6Ib-o8y79t-8MTQTdtZnyLZkAlFrMbJqP79GV0hT07rKsnA1p4tGu8NjNHEvQ/exec"; 
+    const rowsToSend = [];
+    const allRows = table.rows().data().toArray();
+    const keysToClear = [];
+    let syncPerson = prompt("Please enter your name:");
+    if (!syncPerson || syncPerson.trim() === "") { return; }
+    let currentDate = new Date().toLocaleDateString('en-IN'); 
+
+    allRows.forEach(row => {
+        let key = "rem_" + row[2] + "_" + (row[3] || "") + "_" + (row[4] || "") + "_" + (row[23] || "") + "_" + (row[5] || "");
+        let remark = localStorage.getItem(key);
+        if (remark && remark.trim() !== "") {
+            // Updated columns to include Current CPL (row[17]) and Current QL % (row[18])
+            rowsToSend.push([ 
+                row[2],   // Campaign
+                row[3],   // Client Name
+                row[4],   // Project Name
+                row[5],   // Platform
+                row[19],  // CPL Status
+                row[20],  // Qual Status
+                row[17],  // Current CPL
+                row[18],  // Current QL
+                remark, 
+                currentDate, 
+                syncPerson 
+            ]);
+            keysToClear.push(key);
+        }
+    });
+
+    if (rowsToSend.length === 0) { alert("Nothing to sync."); return; }
+    try {
+        await fetch(webAppUrl, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(rowsToSend) });
+        keysToClear.forEach(key => localStorage.removeItem(key));
+        $('.comment-box').val('');
+        alert("Synced Successfully!");
+    } catch (error) { alert("Sync failed."); }
+}
+
+function initMetricObj() { return { p: 0, camp: new Set(), b: 0, s: 0, lt: 0, ld: 0, qt: 0, qd: 0, over: 0, under: 0 }; }
 
 function updateMetricObj(obj, row) {
     let b = parseFloat(row[6]) || 0;
@@ -489,76 +746,53 @@ function updateMetricObj(obj, row) {
     obj.s += s;
     obj.lt += parseFloat(row[9]) || 0;
     obj.ld += parseFloat(row[10]) || 0;
-    obj.qt += parseFloat(row[29]) || 0;
     obj.qd += parseFloat(row[13]) || 0;
     if (s > b) obj.over++; else obj.under++;
 }
 
-// Global Pivot Toggle Function
 window.togglePivot = function(type, id) {
     const btn = event.currentTarget;
     const isExpanded = btn.innerText === '−';
     btn.innerText = isExpanded ? '+' : '−';
-    
     if (type === 'mgr') {
         const tlRows = document.querySelectorAll(`.row-tl[data-mgr-id="${id}"]`);
         tlRows.forEach(row => {
             if (isExpanded) {
                 row.style.display = 'none';
-                // Also hide children FOS if hidden
                 const mgr_tl_id = row.getAttribute('data-tl-id');
                 const fosRows = document.querySelectorAll(`.row-fos[data-mgr-tl-id="${mgr_tl_id}"]`);
                 fosRows.forEach(f => f.style.display = 'none');
                 const tlBtn = row.querySelector('.btn-pivot-toggle');
                 if(tlBtn) tlBtn.innerText = '+';
-            } else {
-                row.style.display = 'table-row';
-            }
+            } else { row.style.display = 'table-row'; }
         });
     } else if (type === 'tl') {
         const fosRows = document.querySelectorAll(`.row-fos[data-mgr-tl-id="${id}"]`);
-        fosRows.forEach(row => {
-            row.style.display = isExpanded ? 'none' : 'table-row';
-        });
+        fosRows.forEach(row => { row.style.display = isExpanded ? 'none' : 'table-row'; });
     }
 };
 
 function refreshAllCharts() {
     const visibleData = table.rows({ search: 'applied' }).data().toArray();
     const summaryContainer = document.getElementById('managerSummary');
-
     if (visibleData.length > 0) {
         summaryContainer.style.display = 'flex';
-        
         const individualMetrics = document.getElementById('individual-mgr-metrics');
         const individualSpending = document.getElementById('individual-mgr-spending');
         const allManagersOverview = document.getElementById('all-managers-overview');
-
         if (activeFilters[28]) {
-            individualMetrics.style.display = 'block';
-            individualSpending.style.display = 'block';
-            allManagersOverview.style.display = 'none';
-
+            individualMetrics.style.display = 'block'; individualSpending.style.display = 'block'; allManagersOverview.style.display = 'none';
             let totals = { projects: visibleData.length, unique: 0, budget: 0, spent: 0, rem: 0, ltarget: 0, ldeliver: 0, qtarget: 0, qdeliver: 0 };
             let analysis = { over: 0, under: 0 };
             let campaignSet = new Set();
-
             visibleData.forEach(row => {
-                let b = parseFloat(row[6]) || 0;
-                let s = parseFloat(row[7]) || 0;
+                let b = parseFloat(row[6]) || 0; let s = parseFloat(row[7]) || 0;
                 if(row[2]) campaignSet.add(row[2]);
-                totals.budget += b;
-                totals.spent += s;
-                totals.ltarget += parseFloat(row[9]) || 0;
-                totals.ldeliver += parseFloat(row[10]) || 0;
-                totals.qdeliver += parseFloat(row[13]) || 0;
-                totals.qtarget += parseFloat(row[29]) || 0;
+                totals.budget += b; totals.spent += s; totals.ltarget += parseFloat(row[9]) || 0;
+                totals.ldeliver += parseFloat(row[10]) || 0; totals.qdeliver += parseFloat(row[13]) || 0;
                 if (s > b) analysis.over++; else analysis.under++;
             });
-            
-            totals.unique = campaignSet.size;
-            totals.rem = totals.budget - totals.spent;
-
+            totals.unique = campaignSet.size; totals.rem = totals.budget - totals.spent;
             document.getElementById('sum-projects').innerText = totals.projects;
             document.getElementById('sum-unique').innerText = totals.unique;
             document.getElementById('sum-budget').innerText = "₹" + Math.round(totals.budget).toLocaleString('en-IN');
@@ -566,61 +800,37 @@ function refreshAllCharts() {
             document.getElementById('sum-remaining').innerText = "₹" + Math.round(totals.rem).toLocaleString('en-IN');
             document.getElementById('sum-ltarget').innerText = Math.round(totals.ltarget).toLocaleString();
             document.getElementById('sum-ldeliver').innerText = Math.round(totals.ldeliver).toLocaleString();
-            document.getElementById('sum-qtarget').innerText = Math.round(totals.qtarget).toLocaleString();
             document.getElementById('sum-qdeliver').innerText = Math.round(totals.qdeliver).toLocaleString();
             document.getElementById('anal-total').innerText = totals.projects;
             document.getElementById('anal-over').innerText = analysis.over;
             document.getElementById('anal-under').innerText = analysis.under;
-
         } else {
-            individualMetrics.style.display = 'none';
-            individualSpending.style.display = 'none';
-            allManagersOverview.style.display = 'block';
-
-            // Pivot Grouping Structure
+            individualMetrics.style.display = 'none'; individualSpending.style.display = 'none'; allManagersOverview.style.display = 'block';
             let tree = {};
             visibleData.forEach(row => {
-                let mgr = row[28] || "Unassigned";
-                let tl = row[24] || "No TL";
-                let fos = row[23] || "No FOS";
-                
+                let mgr = row[28] || "Unassigned"; let tl = row[24] || "No TL"; let fos = row[23] || "No FOS";
                 if (!tree[mgr]) tree[mgr] = { m: initMetricObj(), tls: {} };
                 if (!tree[mgr].tls[tl]) tree[mgr].tls[tl] = { m: initMetricObj(), foss: {} };
                 if (!tree[mgr].tls[tl].foss[fos]) tree[mgr].tls[tl].foss[fos] = { m: initMetricObj() };
-                
-                updateMetricObj(tree[mgr].m, row);
-                updateMetricObj(tree[mgr].tls[tl].m, row);
-                updateMetricObj(tree[mgr].tls[tl].foss[fos].m, row);
+                updateMetricObj(tree[mgr].m, row); updateMetricObj(tree[mgr].tls[tl].m, row); updateMetricObj(tree[mgr].tls[tl].foss[fos].m, row);
             });
-
-            let html = "";
-            let mIdx = 0;
+            let html = ""; let mIdx = 0;
             Object.keys(tree).sort().forEach(mgr => {
-                mIdx++;
-                let d = tree[mgr].m;
-                let mId = `mgr-${mIdx}`;
+                mIdx++; let d = tree[mgr].m; let mId = `mgr-${mIdx}`;
                 html += renderPivotRow(mgr, d, 'mgr', mId, '');
-
                 let tIdx = 0;
                 Object.keys(tree[mgr].tls).sort().forEach(tl => {
-                    tIdx++;
-                    let td = tree[mgr].tls[tl].m;
-                    let tlId = `${mId}-tl-${tIdx}`;
+                    tIdx++; let td = tree[mgr].tls[tl].m; let tlId = `${mId}-tl-${tIdx}`;
                     html += renderPivotRow(tl, td, 'tl', tlId, mId);
-
                     Object.keys(tree[mgr].tls[tl].foss).sort().forEach(fos => {
-                        let fd = tree[mgr].tls[tl].foss[fos].m;
-                        html += renderPivotRow(fos, fd, 'fos', '', tlId);
+                        let fd = tree[mgr].tls[tl].foss[fos].m; html += renderPivotRow(fos, fd, 'fos', '', tlId);
                     });
                 });
             });
             document.getElementById('all-mgr-summary-body').innerHTML = html;
         }
-    } else {
-        summaryContainer.style.display = 'none';
-    }
+    } else { summaryContainer.style.display = 'none'; }
 
-    // Charts update logic
     if (visibleData.length === 0) {
         if (myGroupedChart) myGroupedChart.destroy();
         if (cplPieChart) cplPieChart.destroy();
@@ -631,7 +841,6 @@ function refreshAllCharts() {
     const chartDataMap = {};
     const citySelected = activeFilters[25];
     const headerEl = document.getElementById('barChartHeader');
-
     if (citySelected) {
         visibleData.forEach(row => { const fos = row[23] || "Unassigned"; chartDataMap[fos] = (chartDataMap[fos] || 0) + 1; });
         headerEl.innerText = `FOS Distribution in ${citySelected}`;
@@ -656,19 +865,12 @@ function refreshAllCharts() {
         let s = (row[19] || "").toString().toUpperCase();
         if (s.includes("OK")) cplCounts["OK"]++; else if (s.includes("HIGH")) cplCounts["HIGH"]++; else cplCounts["NOT CALCULATED"]++;
     });
-    
     const cplLabels = Object.keys(cplCounts).filter(k => cplCounts[k] > 0);
     if (cplPieChart) cplPieChart.destroy();
     cplPieChart = new Chart(document.getElementById('cplPieChart').getContext('2d'), {
         type: 'pie',
         data: { labels: cplLabels, datasets: [{ data: cplLabels.map(k => cplCounts[k]), backgroundColor: cplLabels.map(k => k === "OK" ? "#22c55e" : (k === "HIGH" ? "#ef4444" : "#94a3b8")) }] },
-        options: { 
-            responsive: true, maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'bottom', labels: { font: { size: 9, family: 'Cambria' } } },
-                datalabels: { color: '#fff', font: { weight: 'bold', size: 10 }, formatter: (value, ctx) => { let sum = 0; ctx.chart.data.datasets[0].data.map(data => { sum += data; }); return value + "\n(" + (value * 100 / sum).toFixed(1) + "%)"; } }
-            }
-        }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, datalabels: { color: '#fff', formatter: (value, ctx) => { let sum = 0; ctx.chart.data.datasets[0].data.map(data => { sum += data; }); return value + "\n(" + (value * 100 / sum).toFixed(1) + "%)"; } } } }
     });
 
     const qualLabels = ["GOOD", "OK", "LOW", "N/C"];
@@ -677,19 +879,12 @@ function refreshAllCharts() {
         let q = (row[20] || "").toString().toUpperCase();
         if (q.includes("GOOD")) qualCounts["GOOD"]++; else if (q === "OK") qualCounts["OK"]++; else if (q.includes("LOW")) qualCounts["LOW"]++; else qualCounts["N/C"]++;
     });
-
     const activeQualLabels = qualLabels.filter(k => qualCounts[k] > 0);
     if (qualPieChart) qualPieChart.destroy();
     qualPieChart = new Chart(document.getElementById('qualPieChart').getContext('2d'), {
         type: 'pie',
         data: { labels: activeQualLabels, datasets: [{ data: activeQualLabels.map(k => qualCounts[k]), backgroundColor: activeQualLabels.map(k => k === "GOOD" ? "#15803d" : (k === "OK" ? "#86efac" : (k === "LOW" ? "#ef4444" : "#94a3b8"))) }] },
-        options: { 
-            responsive: true, maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'bottom', labels: { font: { size: 9, family: 'Cambria' } } },
-                datalabels: { color: (ctx) => (ctx.dataIndex === 1 && activeQualLabels[ctx.dataIndex] === "OK") ? "#1e293b" : "#fff", font: { weight: 'bold', size: 10 }, formatter: (value, ctx) => { let sum = 0; ctx.chart.data.datasets[0].data.map(data => { sum += data; }); return value + "\n(" + (value * 100 / sum).toFixed(1) + "%)"; } }
-            }
-        }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, datalabels: { color: (ctx) => (ctx.dataIndex === 1 && activeQualLabels[ctx.dataIndex] === "OK") ? "#1e293b" : "#fff", formatter: (value, ctx) => { let sum = 0; ctx.chart.data.datasets[0].data.map(data => { sum += data; }); return value + "\n(" + (value * 100 / sum).toFixed(1) + "%)"; } } } }
     });
 }
 
@@ -700,9 +895,10 @@ function renderPivotRow(name, d, type, id, parentId) {
     let attr = "";
     if (type === 'tl') attr = `data-mgr-id="${parentId}" data-tl-id="${id}"`;
     if (type === 'fos') attr = `data-mgr-tl-id="${parentId}"`;
-    
     let toggleBtn = (type !== 'fos') ? `<button class="btn-pivot-toggle" onclick="togglePivot('${type}', '${id}')">+</button>` : '';
     let nameStyle = type === 'mgr' ? 'color:var(--brand-blue)' : (type === 'tl' ? 'color:var(--stats-purple)' : 'color:#64748b; font-weight:500;');
+    
+    let delPerc = d.lt > 0 ? Math.round((d.ld / d.lt) * 100) : 0;
 
     return `<tr class="${rowClass}" ${attr}>
         <td class="${indentClass}" style="${nameStyle}">${toggleBtn}${name}</td>
@@ -712,22 +908,20 @@ function renderPivotRow(name, d, type, id, parentId) {
         <td>₹${Math.round(d.s).toLocaleString('en-IN')}</td>
         <td class="val-rem">₹${Math.round(rem).toLocaleString('en-IN')}</td>
         <td>${Math.round(d.lt).toLocaleString()}</td>
-        <td>${Math.round(d.ld).toLocaleString()}</td>
-        <td>${Math.round(d.qt).toLocaleString()}</td>
+        <td>${Math.round(d.ld).toLocaleString()} (${delPerc}%)</td>
+        <td>-</td>
         <td>${Math.round(d.qd).toLocaleString()}</td>
         <td class="val-over">${d.over}</td>
         <td class="val-under">${d.under}</td>
     </tr>`;
 }
 
-// Slicer functions (unchanged)
-function handleManagerChange(val) { activeFilters[28] = val; activeFilters[24] = ''; activeFilters[23] = ''; table.column(24).search(''); table.column(23).search(''); applySlicerFilter(28, val); }
-function handleTLChange(val) { activeFilters[23] = ''; table.column(23).search(''); applySlicerFilter(24, val); }
+function handleManagerChange(val) { activeFilters[28] = val; activeFilters[24] = ''; activeFilters[23] = ''; applySlicerFilter(28, val); }
+function handleTLChange(val) { activeFilters[23] = ''; applySlicerFilter(24, val); }
 function applySlicerFilter(colIdx, val) { activeFilters[colIdx] = val; const regexVal = val ? `^${val.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$` : ''; table.column(colIdx).search(regexVal, true, false).draw(); updateAllSlicers(); }
-function toggleMultiFilter(colIdx, val) { if (val === '') activeFilters[colIdx] = []; else { const idx = activeFilters[colIdx].indexOf(val); if (idx > -1) activeFilters[colIdx].splice(idx, 1); else activeFilters[colIdx].push(val); } const searchVal = activeFilters[colIdx].length > 0 ? `^(${activeFilters[colIdx].map(v => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})$` : ''; table.column(colIdx).search(searchVal, true, false).draw(); updateAllSlicers(); }
+
 function updateDropdown(id, valueArray, currentVal, defaultTxt) { const sel = document.getElementById(id); let html = `<option value="">${defaultTxt}</option>`; valueArray.forEach(val => { html += `<option value="${val}" ${val === currentVal ? 'selected' : ''}>${val}</option>`; }); sel.innerHTML = html; }
 function updateButtonUI(containerId, colIdx, valueArray) { let html = `<button class="btn btn-slicer ${activeFilters[colIdx] === '' ? 'active' : ''}" onclick="applySlicerFilter(${colIdx}, '')">All</button>`; valueArray.forEach(val => { html += `<button class="btn btn-slicer ${activeFilters[colIdx] === val ? 'active' : ''}" onclick="applySlicerFilter(${colIdx}, '${val}')">${val}</button>`; }); document.getElementById(containerId).innerHTML = html; }
-function updateMultiButtonUI(containerId, colIdx, valueArray) { const currentSelections = activeFilters[colIdx]; let html = `<button class="btn btn-slicer ${currentSelections.length === 0 ? 'active' : ''}" onclick="toggleMultiFilter(${colIdx}, '')">All</button>`; valueArray.forEach(val => { html += `<button class="btn btn-slicer ${currentSelections.includes(val) ? 'active' : ''}" onclick="toggleMultiFilter(${colIdx}, '${val}')">${val}</button>`; }); document.getElementById(containerId).innerHTML = html; }
 
 function getAvailableValues(colIdx, ignoreOwnFilter = true) {
     const rows = table.rows().data().toArray();
@@ -752,12 +946,14 @@ function updateAllSlicers() {
     updateButtonUI('filter-platform', 5, getAvailableValues(5));
     updateButtonUI('filter-cpl', 19, getAvailableValues(19));
     updateButtonUI('filter-qual', 20, getAvailableValues(20));
-    updateMultiButtonUI('filter-spent', 22, getAvailableValues(22));
 }
 
 function processData() {
     const rows = masterData.slice(1).filter(r => r.length > 0).map(r => {
-        return ["", r[0], r[1], r[2], r[3], r[4], r[7], r[8], r[20], r[9], r[10], r[11], r[12], r[13], r[25], r[26], r[14], r[15], r[16], r[5], r[6], "", r[17], r[18], r[19], r[23], r[21], r[22], r[24], r[27]];
+        return [
+            "", r[0], r[1], r[2], r[3], r[4], r[7], r[8], r[20], r[9], r[10], r[11], r[12], r[13], r[25], r[26], 
+            r[14], r[15], r[16], r[5], r[6], "", r[17], r[18], r[19], r[23], r[21], r[22], r[24], (r[28] || "")
+        ];
     }); 
     table.clear().rows.add(rows).draw();
     updateAllSlicers();
@@ -769,48 +965,25 @@ function handleFile(e) { const file = e.target.files[0]; const reader = new File
 function downloadExcel() {
     const visibleData = table.rows({ search: 'applied' }).data().toArray();
     if (visibleData.length === 0) return;
-    const worksheetData = [targetHeaders.slice(0, 26)];
-    visibleData.forEach(row => {
-        let newRow = [];
-        for(let i=0; i<26; i++) {
-            let val = row[i];
-            if ([6, 7, 8, 16, 17].includes(i)) { let num = parseFloat(val); val = !isNaN(num) ? "₹" + Math.round(num).toLocaleString('en-IN') : val; }
-            if (i === 18) { let num = parseFloat(val); val = !isNaN(num) ? (num * 100).toFixed(2) + "%" : val; }
-            if (i === 21) { let spent = parseFloat(row[7]) || 0; let assigned = parseFloat(row[6]) || 0; val = spent > assigned ? "OVERSPENT" : (spent < assigned ? "UNDERSPENT" : "MATCHED"); }
-            if (typeof val === 'string') val = val.replace(/<[^>]*>?/gm, '');
-            newRow.push(val);
-        }
-        worksheetData.push(newRow);
-    });
+    const worksheetData = [targetHeaders]; 
+    visibleData.forEach(row => worksheetData.push(row));
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(worksheetData), "Marketing Report");
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(worksheetData), "Report");
     XLSX.writeFile(wb, `Marketing_Report.xlsx`);
 }
 
 async function captureAndSendTable() {
-    const visibleData = table.rows({ search: 'applied' }).data().toArray();
-    if (visibleData.length === 0) { alert("Table filter karein!"); return; }
-    let targetMobile = ""; let targetName = "";
-    if (activeFilters[23]) { targetName = activeFilters[23]; targetMobile = visibleData[0][26] || ""; } 
-    else if (activeFilters[24]) { targetName = activeFilters[24]; targetMobile = visibleData[0][27] || ""; } 
-    else { alert("NAME SELECT KRO!"); return; }
-
     const container = document.querySelector('.table-container');
     const tableEl = document.getElementById('campaignTable');
     const oldHeight = container.style.height;
     container.style.height = 'auto';
-    const stickies = document.querySelectorAll('thead th, tfoot th, tbody td:nth-child(-n+6)');
-    stickies.forEach(s => s.style.position = 'static');
-
     try {
         const canvas = await html2canvas(tableEl, { scale: 2, useCORS: true });
         container.style.height = oldHeight;
-        stickies.forEach(s => s.style.position = 'sticky');
         canvas.toBlob(async (blob) => {
             const item = new ClipboardItem({ "image/png": blob });
             await navigator.clipboard.write([item]);
-            const wpUrl = `https://web.whatsapp.com/send?phone=${targetMobile.toString().replace(/\D/g,'')}&text=${encodeURIComponent(`*Hello ${targetName},* 👋\n\nPlease find the *Marketing Performance* report.`)}`;
-            window.open(wpUrl, '_blank');
+            alert("Image copied! Paste in WhatsApp.");
         });
     } catch (err) { alert("Capture failed!"); }
 }
@@ -823,7 +996,7 @@ function toggleProjectStatus(type) {
     table.draw();
 }
 
-function clearData() { if(confirm("Clear all data?")) { localStorage.removeItem('dashboard_data'); location.reload(); } }
+function clearData() { if(confirm("Clear data?")) { localStorage.clear(); location.reload(); } }
 </script>
 </body>
 </html>
