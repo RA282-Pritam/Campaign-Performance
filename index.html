@@ -448,7 +448,8 @@
 let table;
 let masterData = [];
 let projectStatusFilter = []; 
-let activeFilters = { 5:'', 19:'', 20:'', 22:[], 23:'', 24:'', 25:'', 28:'' };
+// UPDATED activeFilters initialization (col 22 is spent type)
+let activeFilters = { 5:'', 19:'', 20:'', 22:'', 23:'', 24:'', 25:'', 28:'' };
 
 let myGroupedChart = null;
 let cplPieChart = null;
@@ -611,63 +612,38 @@ $(document).ready(function() {
     document.getElementById('excelUpload').addEventListener('change', handleFile, false);
 });
 
-/**
- * HELPER: Colorizes status keywords specifically for the Log Entry
- */
 function applyStatusHighlight(text) {
     if (!text) return "";
-    
-    // 1. Separate into parts if a "/" exists (CPL vs QL)
     let segments = text.split('/');
-    
     let colorizedSegments = segments.map(segment => {
         let original = segment.trim();
         let upper = original.toUpperCase();
-        
-        // RED logic: HIGH or LOW
         if (upper.includes("HIGH") || upper.includes("LOW")) {
             return `<span style="color: #dc2626; font-weight: 800;">${original}</span>`;
-        } 
-        // GREEN logic: OK or GOOD
-        else if (upper.includes("OK") || upper.includes("GOOD")) {
+        } else if (upper.includes("OK") || upper.includes("GOOD")) {
             return `<span style="color: #16a34a; font-weight: 800;">${original}</span>`;
         }
-        // DEFAULT logic: grey (Not Calculated / Not Received)
         return `<span style="color: #64748b; font-weight: 500;">${original}</span>`;
     });
-
     return colorizedSegments.join(' <span style="color:#cbd5e1">/</span> ');
 }
 
-/**
- * UPDATED showLog Function
- */
 function showLog(rawText) {
     const historyBody = document.getElementById('historyBody');
     historyBody.innerHTML = ""; 
-
     if (!rawText || rawText.trim() === "" || rawText === "undefined") {
         historyBody.innerHTML = `<div class="text-center py-5"><p class="text-muted small fw-bold">NO SYNC HISTORY FOUND.</p></div>`;
     } else {
-        // Splitting logic
         let entries = rawText.split(/,(?=\s*\d{1,2}\/\d{1,2})|,(?=\s*\d{4})/).map(item => item.trim()).filter(item => item !== "");
-        
         entries.forEach(entry => {
             const regex = /^([\d/.-]+)\s*\((.*?)\)\s*-\s*(.*)$/;
             const match = entry.match(regex);
-
             let datePart, remarkPart, statusPart;
-
             if (match) {
-                datePart = match[1];     
-                remarkPart = match[2];   
-                statusPart = match[3];   
+                datePart = match[1]; remarkPart = match[2]; statusPart = match[3];   
             } else {
-                datePart = "LOG";
-                remarkPart = entry;
-                statusPart = "UPDATED";
+                datePart = "LOG"; remarkPart = entry; statusPart = "UPDATED";
             }
-
             let entryDiv = document.createElement('div');
             entryDiv.className = 'log-entry';
             entryDiv.innerHTML = `
@@ -684,7 +660,6 @@ function showLog(rawText) {
             historyBody.appendChild(entryDiv);
         });
     }
-
     let modal = new bootstrap.Modal(document.getElementById('historyModal'));
     modal.show();
 }
@@ -708,19 +683,9 @@ async function sendToGoogleSheet() {
         let key = "rem_" + row[2] + "_" + (row[3] || "") + "_" + (row[4] || "") + "_" + (row[23] || "") + "_" + (row[5] || "");
         let remark = localStorage.getItem(key);
         if (remark && remark.trim() !== "") {
-            // Updated columns to include Current CPL (row[17]) and Current QL % (row[18])
             rowsToSend.push([ 
-                row[2],   // Campaign
-                row[3],   // Client Name
-                row[4],   // Project Name
-                row[5],   // Platform
-                row[19],  // CPL Status
-                row[20],  // Qual Status
-                row[17],  // Current CPL
-                row[18],  // Current QL
-                remark, 
-                currentDate, 
-                syncPerson 
+                row[2], row[3], row[4], row[5], row[19], row[20], row[17], row[18],
+                remark, currentDate, syncPerson 
             ]);
             keysToClear.push(key);
         }
@@ -897,7 +862,6 @@ function renderPivotRow(name, d, type, id, parentId) {
     if (type === 'fos') attr = `data-mgr-tl-id="${parentId}"`;
     let toggleBtn = (type !== 'fos') ? `<button class="btn-pivot-toggle" onclick="togglePivot('${type}', '${id}')">+</button>` : '';
     let nameStyle = type === 'mgr' ? 'color:var(--brand-blue)' : (type === 'tl' ? 'color:var(--stats-purple)' : 'color:#64748b; font-weight:500;');
-    
     let delPerc = d.lt > 0 ? Math.round((d.ld / d.lt) * 100) : 0;
 
     return `<tr class="${rowClass}" ${attr}>
@@ -946,6 +910,8 @@ function updateAllSlicers() {
     updateButtonUI('filter-platform', 5, getAvailableValues(5));
     updateButtonUI('filter-cpl', 19, getAvailableValues(19));
     updateButtonUI('filter-qual', 20, getAvailableValues(20));
+    // ADDED THIS LINE TO FIX SPENT TYPE FILTER
+    updateButtonUI('filter-spent', 22, getAvailableValues(22));
 }
 
 function processData() {
