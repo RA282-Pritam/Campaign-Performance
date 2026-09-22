@@ -151,7 +151,7 @@
         .tile-value { font-size: 14px; font-weight: 800; color: var(--brand-blue); }
         .val-over { color: #dc2626; }
         .val-under { color: #16a34a; }
-        .val-rem { color: #0ea5e9; } 
+        .val-rem { color: #1e293b; } 
 
         .all-mgr-table { width: 100%; border-collapse: collapse; font-size: 11px; }
         .all-mgr-table th { background: #f8fafc; color: #64748b; text-align: left; padding: 6px; border-bottom: 2px solid #e2e8f0; text-transform: uppercase; font-size: 9px; }
@@ -168,7 +168,7 @@
         .indent-2 { padding-left: 50px !important; }
 
         .table-container { background: #fff; border-radius: 0 6px 6px 6px; border: 1px solid var(--border-color); height: 500px; overflow: auto; position: relative; }
-        table.dataTable { table-layout: fixed !important; border-collapse: separate !important; border-spacing: 0 !important; width: 2380px !important; margin: 0 !important; }
+        table.dataTable { table-layout: fixed !important; border-collapse: separate !important; border-spacing: 0 !important; width: 2470px !important; margin: 0 !important; }
         table.dataTable thead th { position: sticky !important; top: 0 !important; z-index: 1050 !important; background-color: var(--dark-header) !important; color: #fff !important; font-size: 10px; padding: 4px 5px !important; border-bottom: 2px solid #1e293b !important; border-right: 1px solid #475569 !important; vertical-align: middle; }
         table.dataTable tbody td { padding: 4px 8px !important; font-size: 11px; border: 1px solid #f1f5f9 !important; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; background-color: #fff; }
         
@@ -304,7 +304,7 @@
                     <select id="select-tl" class="slicer-select" onchange="handleTLChange(this.value)">
                         <option value="">TL NAME</option>
                     </select>
-                    <select id="select-user" class="slicer-select" onchange="applySlicerFilter(25, this.value)">
+                    <select id="select-user" class="slicer-select" onchange="applySlicerFilter(26, this.value)">
                         <option value="">USER (FOS)</option>
                     </select>
                 </div>
@@ -316,7 +316,7 @@
             <div class="slicer-card">
                 <div class="slicer-header">City</div>
                 <div class="slicer-body" style="padding: 10px; justify-content: center;">
-                    <select id="select-city" class="slicer-select" onchange="applySlicerFilter(27, this.value)">
+                    <select id="select-city" class="slicer-select" onchange="applySlicerFilter(28, this.value)">
                         <option value="">ALL CITIES</option>
                     </select>
                 </div>
@@ -450,8 +450,8 @@
 let table;
 let masterData = [];
 let projectStatusFilter = []; 
-// activeFilters initialization (col 24 is spent type, col 30 is manager)
-let activeFilters = { 6:'', 21:'', 22:'', 24:'', 25:'', 26:'', 27:'', 30:'' };
+// activeFilters: 6: Platform, 22: CPL Status, 23: Qual Status, 25: Spent Type, 26: User, 27: TL Name, 28: City, 31: Mkt Manager
+let activeFilters = { 6:'', 22:'', 23:'', 25:'', 26:'', 27:'', 28:'', 31:'' };
 
 let myGroupedChart = null;
 let cplPieChart = null;
@@ -459,8 +459,15 @@ let qualPieChart = null;
 
 Chart.register(ChartDataLabels);
 
-// targetHeaders modified to include QL TARGET between FEEDBACK RECEIVED and LEADS QUALIFIED
-const targetHeaders = ["S. NO", "DRR", "RDRR", "CAMPAIGN", "CLIENT NAME", "PROJECT NAME", "PLATFORM", "CREDIT ASSIGNED", "TOTAL CREDIT SPENT", "SHOULD WE HAVE SPENT", "CREDIT ASSIGNED FOR", "LEADS DELIVERED", "PENDING LEADS", "FEEDBACK RECEIVED", "QL TARGET", "LEADS QUALIFIED", "SV PROPOSED", "SV DONE", "TARGET CPL", "CURRENT CPL", "QUALIFICAITON", "CPL STATUS", "QUALIFICATION STATUS", "SPENDING ANALYSIS", "SPENT TYPE", "ASSIGNED USER", "TL NAME", "CITY", "MGR PHONE", "TL PHONE", "MKT MANAGER", "REMARKS"];
+const targetHeaders = [
+    "S. NO", "DRR", "RDRR", "CAMPAIGN", "CLIENT NAME", "PROJECT NAME", "PLATFORM", 
+    "CREDIT ASSIGNED", "TOTAL CREDIT SPENT", "REMAINING BUDGET", "SHOULD WE HAVE SPENT", 
+    "CREDIT ASSIGNED FOR", "LEADS DELIVERED", "PENDING LEADS", "FEEDBACK RECEIVED", 
+    "QL TARGET", "LEADS QUALIFIED", "SV PROPOSED", "SV DONE", "TARGET CPL", 
+    "CURRENT CPL", "QUALIFICAITON", "CPL STATUS", "QUALIFICATION STATUS", 
+    "SPENDING ANALYSIS", "SPENT TYPE", "ASSIGNED USER", "TL NAME", "CITY", 
+    "MGR PHONE", "TL PHONE", "MKT MANAGER", "REMARKS"
+];
 
 const barLabelsPlugin = {
     id: 'barLabelsPlugin',
@@ -496,7 +503,7 @@ function toggleChartVisibility() {
 
 $.fn.dataTable.ext.search.push(function(settings, data) {
     if (projectStatusFilter.length === 0) return true;
-    let pendingLeads = parseFloat(data[12]) || 0; // PENDING LEADS index at 12
+    let pendingLeads = parseFloat(data[13]) || 0;
     let isComplete = (pendingLeads <= 0);
     let isPending = (pendingLeads >= 1);
     if (projectStatusFilter.includes('COMPLETE') && isComplete) return true;
@@ -506,7 +513,7 @@ $.fn.dataTable.ext.search.push(function(settings, data) {
 
 $(document).ready(function() {
     const headerHtml = targetHeaders.map((h, i) => {
-        if (i === 31) { // REMARKS is now at index 31
+        if (i === 32) {
             return `<th style="min-width:180px;">${h} <button class="btn-google-sheet" onclick="sendToGoogleSheet()" title="Sync remarks to Sheet">🚀 SYNC</button></th>`;
         }
         return `<th>${h}</th>`;
@@ -519,20 +526,20 @@ $(document).ready(function() {
         "dom": 'frti', "paging": false, "ordering": true, "info": false, "autoWidth": false,
         "language": { "search": "", "searchPlaceholder": "Search..." },
         "columnDefs": [
-            { "targets": [24, 25, 26, 28, 29, 30], "visible": false }, // Hidden target indices (shifted due to QL Target insertion)
-            { "targets": 0, "width": "35px" }, // S. NO
-            { "targets": 1, "width": "40px" }, // DRR
-            { "targets": 2, "width": "65px", "className": "dt-center" }, // RDRR
-            { "targets": 3, "width": "85px" }, // CAMPAIGN
-            { "targets": 4, "width": "130px" }, // CLIENT NAME
-            { "targets": 5, "width": "130px" }, // PROJECT NAME
-            { "targets": 6, "width": "100px" }, // PLATFORM
-            { "targets": [7, 11, 12, 14, 15, 16, 17, 18, 19], "className": "dt-center", "width": "60px" }, // Shifted numeric columns and QL TARGET at index 14
-            { "targets": [8, 9, 10, 13, 20, 21, 22], "className": "dt-center", "width": "85px" }, // Shifted metric badges
-            { "targets": 27, "width": "100px" }, // CITY
-            { "targets": 31, "width": "220px", "orderable": false }, // REMARKS
+            { "targets": [25, 26, 27, 29, 30, 31], "visible": false },
+            { "targets": 0, "width": "35px" },
+            { "targets": 1, "width": "40px" },
+            { "targets": 2, "width": "65px", "className": "dt-center" },
+            { "targets": 3, "width": "85px" },
+            { "targets": 4, "width": "130px" },
+            { "targets": 5, "width": "130px" },
+            { "targets": 6, "width": "100px" },
+            { "targets": [7, 12, 13, 15, 16, 17, 18, 19, 20], "className": "dt-center", "width": "60px" }, 
+            { "targets": [8, 9, 10, 11, 14, 21, 22, 23], "className": "dt-center", "width": "85px" }, 
+            { "targets": 28, "width": "100px" },
+            { "targets": 32, "width": "220px", "orderable": false },
             { 
-                "targets": 23, "width": "75px", "className": "dt-center", // SPENDING ANALYSIS
+                "targets": 24, "width": "75px", "className": "dt-center",
                 "render": function(data, type, row) {
                     let spent = parseFloat(row[8]) || 0; 
                     let assigned = parseFloat(row[7]) || 0; 
@@ -544,10 +551,10 @@ $(document).ready(function() {
                 }
             },
             {
-                "targets": 31, // REMARKS
+                "targets": 32,
                 "render": function(data, type, row) {
                     if (type === 'display') {
-                        let key = "rem_" + row[3] + "_" + (row[4] || "") + "_" + (row[5] || "") + "_" + (row[25] || "") + "_" + (row[6] || "");
+                        let key = "rem_" + row[3] + "_" + (row[4] || "") + "_" + (row[5] || "") + "_" + (row[26] || "") + "_" + (row[6] || "");
                         let savedVal = localStorage.getItem(key) || "";
                         let historyRaw = data ? data.toString().replace(/'/g, "\\'") : "";
                         
@@ -563,45 +570,57 @@ $(document).ready(function() {
         ],
         "createdRow": function(row, data) {
             $('td', row).each(function() { 
-                if(!$(this).find('.comment-box').length) $(this).attr('title', $(this).text()); 
+                if(!$(this).find('.comment-box').length) $(this).attr('title',$(this).text()); 
             });
             if (data[3]) { 
                 const link = `https://leadmanager.automateleads.ai/page/campaign-details/${data[3]}`;
                 $('td:eq(3)', row).html(`<a href="${link}" target="_blank" class="campaign-link">${data[3]}</a>`);
             }
-            [7, 8, 9, 18, 19].forEach(idx => { 
+            
+            // Currency formatting
+            [7, 9, 10, 19, 20].forEach(idx => { 
                 if (data[idx] !== undefined && data[idx] !== null && data[idx] !== "") {
                     let val = parseFloat(data[idx]);
                     if (!isNaN(val)) {
-                        let formatted = "₹" + Math.round(val).toLocaleString('en-IN');
-                        $('td:eq('+idx+')', row).html(`<span style="font-weight:700;">${formatted}</span>`);
+                        let formatted = (val < 0 ? "-₹" : "₹") + Math.abs(Math.round(val)).toLocaleString('en-IN');
+                        let colorStyle = (idx === 9 && val < 0) ? 'color: #dc2626;' : '';
+                        $('td:eq('+idx+')', row).html(`<span style="font-weight:700; ${colorStyle}">${formatted}</span>`);
                     }
                 }
             });
+
+            // TOTAL CREDIT SPENT (Index 8) with Spent %
+            if (data[8] !== undefined && data[8] !== null && data[8] !== "") {
+                let spent = parseFloat(data[8]) || 0;
+                let assigned = parseFloat(data[7]) || 0;
+                let spentPerc = assigned > 0 ? Math.round((spent / assigned) * 100) : 0;
+                let formattedSpent = "₹" + Math.round(spent).toLocaleString('en-IN');
+                $('td:eq(8)', row).html(`<span style="font-weight:700;">${formattedSpent}</span> <small style="color:#64748b;">(${spentPerc}%)</small>`);
+            }
             
-            if (data[11] !== undefined) { 
-                let delivered = parseFloat(data[11]) || 0;
-                let targetLeads = parseFloat(data[10]) || 0; 
+            if (data[12] !== undefined) {
+                let delivered = parseFloat(data[12]) || 0;
+                let targetLeads = parseFloat(data[11]) || 0;
                 let perc = targetLeads > 0 ? Math.round((delivered / targetLeads) * 100) : 0;
-                $('td:eq(11)', row).html(`<span style="font-weight:700;">${delivered}</span> <small style="color:#64748b;">(${perc}%)</small>`);
+                $('td:eq(12)', row).html(`<span style="font-weight:700;">${delivered}</span> <small style="color:#64748b;">(${perc}%)</small>`);
             }
 
-            if (data[20] !== undefined && data[20] !== null && data[20] !== "") { // QUALIFICATION
-                let val = parseFloat(data[20]);
+            if (data[21] !== undefined && data[21] !== null && data[21] !== "") {
+                let val = parseFloat(data[21]);
                 if (!isNaN(val)) {
                     let formatted = (val * 100).toFixed(2) + "%";
-                    $('td:eq(20)', row).html(`<span style="font-weight:700;">${formatted}</span>`);
+                    $('td:eq(21)', row).html(`<span style="font-weight:700;">${formatted}</span>`);
                 }
             }
-            if (data[21]) { // CPL STATUS
-                let s = data[21].toString().toUpperCase();
-                if (s.includes("OK")) $('td:eq(21)', row).html(`<span class="badge-pill status-ok">${s}</span>`);
-                else if (s.includes("HIGH")) $('td:eq(21)', row).html(`<span class="badge-pill status-high">${s}</span>`);
+            if (data[22]) {
+                let s = data[22].toString().toUpperCase();
+                if (s.includes("OK")) $('td:eq(22)', row).html(`<span class="badge-pill status-ok">${s}</span>`);
+                else if (s.includes("HIGH")) $('td:eq(22)', row).html(`<span class="badge-pill status-high">${s}</span>`);
             }
-            if (data[22]) { // QUALIFICATION STATUS
-                let q = data[22].toString().toUpperCase();
+            if (data[23]) {
+                let q = data[23].toString().toUpperCase();
                 let cls = q === "GOOD" ? "qual-good" : (q === "OK" ? "qual-ok" : (q === "LOW" ? "qual-low" : ""));
-                if(cls) $('td:eq(22)', row).html(`<span class="badge-pill ${cls}">${q}</span>`);
+                if(cls) $('td:eq(23)', row).html(`<span class="badge-pill ${cls}">${q}</span>`);
             }
         }
     });
@@ -684,11 +703,11 @@ async function sendToGoogleSheet() {
     let currentDate = new Date().toLocaleDateString('en-IN'); 
 
     allRows.forEach(row => {
-        let key = "rem_" + row[3] + "_" + (row[4] || "") + "_" + (row[5] || "") + "_" + (row[25] || "") + "_" + (row[6] || "");
+        let key = "rem_" + row[3] + "_" + (row[4] || "") + "_" + (row[5] || "") + "_" + (row[26] || "") + "_" + (row[6] || "");
         let remark = localStorage.getItem(key);
         if (remark && remark.trim() !== "") {
             rowsToSend.push([ 
-                row[3], row[4], row[5], row[6], row[21], row[22], row[19], row[20],
+                row[3], row[4], row[5], row[6], row[22], row[23], row[20], row[21],
                 remark, currentDate, syncPerson 
             ]);
             keysToClear.push(key);
@@ -713,10 +732,10 @@ function updateMetricObj(obj, row) {
     if(row[3]) obj.camp.add(row[3]); 
     obj.b += b;
     obj.s += s;
-    obj.lt += parseFloat(row[10]) || 0; 
-    obj.ld += parseFloat(row[11]) || 0; 
-    obj.qt += parseFloat(row[14]) || 0; // Cumulative QL Target from Main Table (Index 14)
-    obj.qd += parseFloat(row[15]) || 0; // Cumulative QL Delivered (Index 15)
+    obj.lt += parseFloat(row[11]) || 0; 
+    obj.ld += parseFloat(row[12]) || 0; 
+    obj.qt += parseFloat(row[15]) || 0; 
+    obj.qd += parseFloat(row[16]) || 0; 
     if (s > b) obj.over++; else obj.under++;
 }
 
@@ -750,7 +769,7 @@ function refreshAllCharts() {
         const individualMetrics = document.getElementById('individual-mgr-metrics');
         const individualSpending = document.getElementById('individual-mgr-spending');
         const allManagersOverview = document.getElementById('all-managers-overview');
-        if (activeFilters[30]) { // MKT MANAGER shifted to 30
+        if (activeFilters[31]) { 
             individualMetrics.style.display = 'block'; individualSpending.style.display = 'block'; allManagersOverview.style.display = 'none';
             let totals = { projects: visibleData.length, unique: 0, budget: 0, spent: 0, rem: 0, ltarget: 0, ldeliver: 0, qtarget: 0, qdeliver: 0 };
             let analysis = { over: 0, under: 0 };
@@ -758,10 +777,10 @@ function refreshAllCharts() {
             visibleData.forEach(row => {
                 let b = parseFloat(row[7]) || 0; let s = parseFloat(row[8]) || 0;
                 if(row[3]) campaignSet.add(row[3]);
-                totals.budget += b; totals.spent += s; totals.ltarget += parseFloat(row[10]) || 0;
-                totals.ldeliver += parseFloat(row[11]) || 0; 
-                totals.qtarget += parseFloat(row[14]) || 0; // Added QL Target summation (Index 14)
-                totals.qdeliver += parseFloat(row[15]) || 0; // Added QL Delivered summation (Index 15)
+                totals.budget += b; totals.spent += s; totals.ltarget += parseFloat(row[11]) || 0;
+                totals.ldeliver += parseFloat(row[12]) || 0; 
+                totals.qtarget += parseFloat(row[15]) || 0; 
+                totals.qdeliver += parseFloat(row[16]) || 0; 
                 if (s > b) analysis.over++; else analysis.under++;
             });
             totals.unique = campaignSet.size; totals.rem = totals.budget - totals.spent;
@@ -769,7 +788,11 @@ function refreshAllCharts() {
             document.getElementById('sum-unique').innerText = totals.unique;
             document.getElementById('sum-budget').innerText = "₹" + Math.round(totals.budget).toLocaleString('en-IN');
             document.getElementById('sum-spent').innerText = "₹" + Math.round(totals.spent).toLocaleString('en-IN');
-            document.getElementById('sum-remaining').innerText = "₹" + Math.round(totals.rem).toLocaleString('en-IN');
+            
+            const remEl = document.getElementById('sum-remaining');
+            remEl.innerText = (totals.rem < 0 ? "-₹" : "₹") + Math.abs(Math.round(totals.rem)).toLocaleString('en-IN');
+            remEl.style.color = totals.rem < 0 ? '#dc2626' : '#1e293b';
+
             document.getElementById('sum-ltarget').innerText = Math.round(totals.ltarget).toLocaleString();
             document.getElementById('sum-ldeliver').innerText = Math.round(totals.ldeliver).toLocaleString();
             document.getElementById('sum-qtarget').innerText = Math.round(totals.qtarget).toLocaleString();
@@ -781,9 +804,9 @@ function refreshAllCharts() {
             individualMetrics.style.display = 'none'; individualSpending.style.display = 'none'; allManagersOverview.style.display = 'block';
             let tree = {};
             visibleData.forEach(row => {
-                let mgr = row[30] || "Unassigned"; 
-                let tl = row[26] || "No TL"; 
-                let fos = row[25] || "No FOS";
+                let mgr = row[31] || "Unassigned"; 
+                let tl = row[27] || "No TL"; 
+                let fos = row[26] || "No FOS";
                 if (!tree[mgr]) tree[mgr] = { m: initMetricObj(), tls: {} };
                 if (!tree[mgr].tls[tl]) tree[mgr].tls[tl] = { m: initMetricObj(), foss: {} };
                 if (!tree[mgr].tls[tl].foss[fos]) tree[mgr].tls[tl].foss[fos] = { m: initMetricObj() };
@@ -814,13 +837,13 @@ function refreshAllCharts() {
     }
 
     const chartDataMap = {};
-    const citySelected = activeFilters[27]; // CITY shifted to 27
+    const citySelected = activeFilters[28];
     const headerEl = document.getElementById('barChartHeader');
     if (citySelected) {
-        visibleData.forEach(row => { const fos = row[25] || "Unassigned"; chartDataMap[fos] = (chartDataMap[fos] || 0) + 1; }); // ASSIGNED USER shifted to 25
+        visibleData.forEach(row => { const fos = row[26] || "Unassigned"; chartDataMap[fos] = (chartDataMap[fos] || 0) + 1; });
         headerEl.innerText = `FOS Distribution in ${citySelected}`;
     } else {
-        visibleData.forEach(row => { const city = row[27] || "Unknown"; chartDataMap[city] = (chartDataMap[city] || 0) + 1; }); // CITY shifted to 27
+        visibleData.forEach(row => { const city = row[28] || "Unknown"; chartDataMap[city] = (chartDataMap[city] || 0) + 1; });
         headerEl.innerText = "City-wise Project Distribution";
     }
 
@@ -837,7 +860,7 @@ function refreshAllCharts() {
 
     const cplCounts = { "OK": 0, "HIGH": 0, "NOT CALCULATED": 0 };
     visibleData.forEach(row => {
-        let s = (row[21] || "").toString().toUpperCase(); // CPL STATUS shifted to 21
+        let s = (row[22] || "").toString().toUpperCase();
         if (s.includes("OK")) cplCounts["OK"]++; else if (s.includes("HIGH")) cplCounts["HIGH"]++; else cplCounts["NOT CALCULATED"]++;
     });
     const cplLabels = Object.keys(cplCounts).filter(k => cplCounts[k] > 0);
@@ -851,7 +874,7 @@ function refreshAllCharts() {
     const qualLabels = ["GOOD", "OK", "LOW", "N/C"];
     const qualCounts = { "GOOD": 0, "OK": 0, "LOW": 0, "N/C": 0 };
     visibleData.forEach(row => {
-        let q = (row[22] || "").toString().toUpperCase(); // QUALIFICATION STATUS shifted to 22
+        let q = (row[23] || "").toString().toUpperCase();
         if (q.includes("GOOD")) qualCounts["GOOD"]++; else if (q === "OK") qualCounts["OK"]++; else if (q.includes("LOW")) qualCounts["LOW"]++; else qualCounts["N/C"]++;
     });
     const activeQualLabels = qualLabels.filter(k => qualCounts[k] > 0);
@@ -873,14 +896,17 @@ function renderPivotRow(name, d, type, id, parentId) {
     let toggleBtn = (type !== 'fos') ? `<button class="btn-pivot-toggle" onclick="togglePivot('${type}', '${id}')">+</button>` : '';
     let nameStyle = type === 'mgr' ? 'color:var(--brand-blue)' : (type === 'tl' ? 'color:var(--stats-purple)' : 'color:#64748b; font-weight:500;');
     let delPerc = d.lt > 0 ? Math.round((d.ld / d.lt) * 100) : 0;
+    let spentPerc = d.b > 0 ? Math.round((d.s / d.b) * 100) : 0;
+    
+    let remColorStyle = rem < 0 ? 'color: #dc2626;' : 'color: #1e293b;';
 
     return `<tr class="${rowClass}" ${attr}>
         <td class="${indentClass}" style="${nameStyle}">${toggleBtn}${name}</td>
         <td>${d.p}</td>
         <td style="color:#6366f1;">${d.camp.size}</td>
         <td>₹${Math.round(d.b).toLocaleString('en-IN')}</td>
-        <td>₹${Math.round(d.s).toLocaleString('en-IN')}</td>
-        <td class="val-rem">₹${Math.round(rem).toLocaleString('en-IN')}</td>
+        <td>₹${Math.round(d.s).toLocaleString('en-IN')} <small style="color:#64748b; font-weight:normal;">(${spentPerc}%)</small></td>
+        <td style="${remColorStyle}">${(rem < 0 ? "-₹" : "₹") + Math.abs(Math.round(rem)).toLocaleString('en-IN')}</td>
         <td>${Math.round(d.lt).toLocaleString()}</td>
         <td>${Math.round(d.ld).toLocaleString()} (${delPerc}%)</td>
         <td>${Math.round(d.qt).toLocaleString()}</td>
@@ -890,8 +916,8 @@ function renderPivotRow(name, d, type, id, parentId) {
     </tr>`;
 }
 
-function handleManagerChange(val) { activeFilters[30] = val; activeFilters[26] = ''; activeFilters[25] = ''; applySlicerFilter(30, val); }
-function handleTLChange(val) { activeFilters[25] = ''; applySlicerFilter(26, val); }
+function handleManagerChange(val) { activeFilters[31] = val; activeFilters[27] = ''; activeFilters[26] = ''; applySlicerFilter(31, val); }
+function handleTLChange(val) { activeFilters[26] = ''; applySlicerFilter(27, val); }
 function applySlicerFilter(colIdx, val) { activeFilters[colIdx] = val; const regexVal = val ? `^${val.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$` : ''; table.column(colIdx).search(regexVal, true, false).draw(); updateAllSlicers(); }
 
 function updateDropdown(id, valueArray, currentVal, defaultTxt) { const sel = document.getElementById(id); let html = `<option value="">${defaultTxt}</option>`; valueArray.forEach(val => { html += `<option value="${val}" ${val === currentVal ? 'selected' : ''}>${val}</option>`; }); sel.innerHTML = html; }
@@ -913,53 +939,58 @@ function getAvailableValues(colIdx, ignoreOwnFilter = true) {
 
 function updateAllSlicers() {
     const allRows = table.rows().data().toArray();
-    updateDropdown('select-manager', [...new Set(allRows.map(r => r[30]).filter(Boolean))].sort(), activeFilters[30], "MANAGER NAME");
-    updateDropdown('select-tl', getAvailableValues(26), activeFilters[26], "TL NAME");
-    updateDropdown('select-user', getAvailableValues(25), activeFilters[25], "USER (FOS)");
-    updateDropdown('select-city', getAvailableValues(27), activeFilters[27], "ALL CITIES");
+    updateDropdown('select-manager', [...new Set(allRows.map(r => r[31]).filter(Boolean))].sort(), activeFilters[31], "MANAGER NAME");
+    updateDropdown('select-tl', getAvailableValues(27), activeFilters[27], "TL NAME");
+    updateDropdown('select-user', getAvailableValues(26), activeFilters[26], "USER (FOS)");
+    updateDropdown('select-city', getAvailableValues(28), activeFilters[28], "ALL CITIES");
     updateButtonUI('filter-platform', 6, getAvailableValues(6));
-    updateButtonUI('filter-cpl', 21, getAvailableValues(21));
-    updateButtonUI('filter-qual', 22, getAvailableValues(22));
-    updateButtonUI('filter-spent', 24, getAvailableValues(24));
+    updateButtonUI('filter-cpl', 22, getAvailableValues(22));
+    updateButtonUI('filter-qual', 23, getAvailableValues(23));
+    updateButtonUI('filter-spent', 25, getAvailableValues(25));
 }
 
 function processData() {
     const cleanVal = (val) => (val !== undefined && val !== null) ? val : "";
     
     const rows = masterData.slice(1).filter(r => r.length > 0).map(r => {
+        let assigned = parseFloat(r[7]) || 0;
+        let spent = parseFloat(r[8]) || 0;
+        let remaining = assigned - spent;
+
         return [
-            "",             // 0: S. NO
-            cleanVal(r[0]),  // 1: DRR (Excel Index 0)
-            cleanVal(r[29]), // 2: RDRR (Excel Index 29)
-            cleanVal(r[1]),  // 3: CAMPAIGN (Excel Index 1)
-            cleanVal(r[2]),  // 4: CLIENT NAME (Excel Index 2)
-            cleanVal(r[3]),  // 5: PROJECT NAME (Excel Index 3)
-            cleanVal(r[4]),  // 6: PLATFORM (Excel Index 4)
-            cleanVal(r[7]),  // 7: CREDIT ASSIGNED (Excel Index 7)
-            cleanVal(r[8]),  // 8: TOTAL CREDIT SPENT (Excel Index 8)
-            cleanVal(r[20]), // 9: SHOULD WE HAVE SPENT (Excel Index 20)
-            cleanVal(r[9]),  // 10: CREDIT ASSIGNED FOR (Excel Index 9)
-            cleanVal(r[10]), // 11: LEADS DELIVERED (Excel Index 10)
-            cleanVal(r[11]), // 12: PENDING LEADS (Excel Index 11)
-            cleanVal(r[12]), // 13: FEEDBACK RECEIVED (Excel Index 12)
-            cleanVal(r[27]), // 14: QL TARGET (Excel Index 27) -> Shifted here (placed between feedback and qualified)
-            cleanVal(r[13]), // 15: LEADS QUALIFIED (Excel Index 13) -> Shifted to 15
-            cleanVal(r[25]), // 16: SV PROPOSED (Excel Index 25) -> Shifted to 16
-            cleanVal(r[26]), // 17: SV DONE (Excel Index 26) -> Shifted to 17
-            cleanVal(r[14]), // 18: TARGET CPL (Excel Index 14)
-            cleanVal(r[15]), // 19: CURRENT CPL (Excel Index 15)
-            cleanVal(r[16]), // 20: QUALIFICATION (Excel Index 16)
-            cleanVal(r[5]),  // 21: CPL STATUS (Excel Index 5)
-            cleanVal(r[6]),  // 22: QUALIFICATION STATUS (Excel Index 6)
-            "",              // 23: SPENDING ANALYSIS
-            cleanVal(r[17]), // 24: SPENT TYPE (Excel Index 17)
-            cleanVal(r[18]), // 25: ASSIGNED USER (Excel Index 18)
-            cleanVal(r[19]), // 26: TL NAME (Excel Index 19)
-            cleanVal(r[23]), // 27: CITY (Excel Index 23)
-            cleanVal(r[21]), // 28: MGR PHONE (Excel Index 21)
-            cleanVal(r[22]), // 29: TL PHONE (Excel Index 22)
-            cleanVal(r[24]), // 30: MKT MANAGER (Excel Index 24)
-            cleanVal(r[28])  // 31: REMARKS (Excel Index 28)
+            "",              // 0: S. NO
+            cleanVal(r[0]),  // 1: DRR
+            cleanVal(r[29]), // 2: RDRR
+            cleanVal(r[1]),  // 3: CAMPAIGN
+            cleanVal(r[2]),  // 4: CLIENT NAME
+            cleanVal(r[3]),  // 5: PROJECT NAME
+            cleanVal(r[4]),  // 6: PLATFORM
+            cleanVal(r[7]),  // 7: CREDIT ASSIGNED
+            cleanVal(r[8]),  // 8: TOTAL CREDIT SPENT
+            remaining,       // 9: REMAINING BUDGET (Assigned - Spent)
+            cleanVal(r[20]), // 10: SHOULD WE HAVE SPENT
+            cleanVal(r[9]),  // 11: CREDIT ASSIGNED FOR
+            cleanVal(r[10]), // 12: LEADS DELIVERED
+            cleanVal(r[11]), // 13: PENDING LEADS
+            cleanVal(r[12]), // 14: FEEDBACK RECEIVED
+            cleanVal(r[27]), // 15: QL TARGET
+            cleanVal(r[13]), // 16: LEADS QUALIFIED
+            cleanVal(r[25]), // 17: SV PROPOSED
+            cleanVal(r[26]), // 18: SV DONE
+            cleanVal(r[14]), // 19: TARGET CPL
+            cleanVal(r[15]), // 20: CURRENT CPL
+            cleanVal(r[16]), // 21: QUALIFICATION
+            cleanVal(r[5]),  // 22: CPL STATUS
+            cleanVal(r[6]),  // 23: QUALIFICATION STATUS
+            "",              // 24: SPENDING ANALYSIS
+            cleanVal(r[17]), // 25: SPENT TYPE
+            cleanVal(r[18]), // 26: ASSIGNED USER
+            cleanVal(r[19]), // 27: TL NAME
+            cleanVal(r[23]), // 28: CITY
+            cleanVal(r[21]), // 29: MGR PHONE
+            cleanVal(r[22]), // 30: TL PHONE
+            cleanVal(r[24]), // 31: MKT MANAGER
+            cleanVal(r[28])  // 32: REMARKS
         ];
     }); 
     table.clear().rows.add(rows).draw();
