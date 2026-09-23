@@ -44,7 +44,37 @@
         }
         
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #fff; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .top-bar-title-group { display: flex; align-items: center; gap: 12px; }
         .top-bar h4 { font-weight: 800; font-size: 15px; color: var(--dark-header); margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Premium & Sleek Indigo Theme for Date Badge */
+        .badge-data-till {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+            border: 1px solid #c7d2fe;
+            color: #4338ca;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 1px 2px rgba(99, 102, 241, 0.12);
+        }
+        .data-till-dot {
+            width: 7px;
+            height: 7px;
+            background-color: #6366f1;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #6366f1;
+            animation: pulseBlink 1.4s infinite ease-in-out;
+        }
+        @keyframes pulseBlink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.85); }
+        }
 
         .action-group { display: flex; gap: 8px; align-items: center; }
         .upload-card { background: #f8fafc; padding: 2px 8px; border-radius: 4px; border: 1px dashed var(--brand-blue); }
@@ -58,72 +88,104 @@
             padding: 4px 10px; 
             border-radius: 4px; 
             font-weight: 700; 
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-family: 'Cambria', serif;
+            text-transform: uppercase; 
+            display: flex; 
+            align-items: center; 
+            gap: 4px; 
+            font-family: 'Cambria', serif; 
         }
         .btn-whatsapp-small:hover { background: #16a34a; color: #fff; }
 
-        .btn-google-sheet {
-            background: var(--google-green);
-            border: 1px solid #166534;
-            color: #fff;
-            font-size: 9px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 700;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-family: 'Cambria', serif;
-            float: right;
-            margin-top: -2px;
+        .btn-google-sheet { 
+            background: var(--google-green); 
+            border: 1px solid #166534; 
+            color: #fff; 
+            font-size: 9px; 
+            padding: 2px 6px; 
+            border-radius: 4px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            display: flex; 
+            align-items: center; 
+            gap: 4px; 
+            font-family: 'Cambria', serif; 
+            float: right; 
+            margin-top: -2px; 
         }
         .btn-google-sheet:hover { background: #166534; color: #fff; }
 
-        .btn-log {
-            background: var(--log-orange);
-            color: #fff;
-            border: none;
-            font-size: 8px;
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: opacity 0.2s;
+        .btn-log { 
+            background: var(--log-orange); 
+            color: #fff; 
+            border: none; 
+            font-size: 8px; 
+            padding: 2px 5px; 
+            border-radius: 3px; 
+            font-weight: 800; 
+            cursor: pointer; 
+            transition: opacity 0.2s; 
         }
         .btn-log:hover { opacity: 0.8; color: #fff; }
 
-        .table-toolbar { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 2px; }
+        .table-toolbar { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 6px; 
+            flex-wrap: wrap; 
+            gap: 10px;
+            background: #fff; 
+            padding: 8px 12px; 
+            border-radius: 8px; 
+            border: 1px solid var(--border-color); 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
+        }
+
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-left: auto;
+        }
 
         .btn-toggle-table, .btn-toggle-charts { 
             border: 1px solid transparent; 
             color: #fff; 
             font-size: 10px; 
-            padding: 5px 12px; 
-            border-radius: 4px 4px 0 0; 
+            padding: 6px 14px; 
+            border-radius: 6px; 
             font-weight: 800; 
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: -1px;
-            position: relative;
-            z-index: 10;
-            transition: opacity 0.2s;
-            font-family: 'Cambria', serif;
+            text-transform: uppercase; 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            transition: opacity 0.2s; 
+            font-family: 'Cambria', serif; 
+            cursor: pointer;
         }
 
         .btn-toggle-table { background: var(--toggle-slate); border-color: #475569; }
         .btn-toggle-charts { background: var(--stats-purple); border-color: #4f46e5; }
-        .btn-download-table { background: var(--download-blue); border: 1px solid #0284c7; color: #fff; font-size: 10px; padding: 5px 12px; border-radius: 4px 4px 0 0; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 6px; margin-bottom: -1px; position: relative; z-index: 10; font-family: 'Cambria', serif; }
+        .btn-download-table { background: var(--download-blue); border: 1px solid #0284c7; color: #fff; font-size: 10px; padding: 6px 14px; border-radius: 6px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 6px; font-family: 'Cambria', serif; cursor: pointer; }
 
-        .project-status-filter { display: flex; gap: 4px; background: #fff; padding: 3px 8px; border: 1px solid var(--border-color); border-bottom: none; border-radius: 4px 4px 0 0; align-items: center; margin-bottom: -1px; }
-        .status-label { font-size: 9px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-right: 4px; }
+        .project-status-filter { display: flex; gap: 6px; background: #f8fafc; padding: 4px 10px; border: 1px solid #cbd5e1; border-radius: 6px; align-items: center; box-shadow: inset 0 1px 2px rgba(0,0,0,0.02); }
+        .status-label { font-size: 10px; font-weight: 800; color: #334155; text-transform: uppercase; margin-right: 4px; letter-spacing: 0.5px; }
         
+        .btn-slicer { border: 1px solid #cbd5e1; background: #ffffff; font-size: 10px; padding: 4px 10px; border-radius: 4px; color: #475569; font-weight: 700; transition: all 0.2s; font-family: 'Cambria', serif; cursor: pointer; }
+        .btn-slicer:hover { background: #f1f5f9; color: #1e293b; border-color: #94a3b8; }
+        .btn-slicer.active { background: var(--brand-blue) !important; color: #fff !important; border-color: #1d4ed8 !important; box-shadow: 0 2px 4px rgba(37,99,235,0.25); }
+        
+        .project-status-filter:nth-of-type(1) .btn-slicer.active { background: #0f172a !important; border-color: #020617 !important; }
+        .project-status-filter:nth-of-type(2) .btn-slicer.active { background: #0284c7 !important; border-color: #0369a1 !important; }
+
         .slicer-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-bottom: 5px; }
         .slicer-card { background: #fff; border-radius: 6px; border: 1px solid var(--border-color); overflow: hidden; display: flex; flex-direction: column; min-height: 110px; }
         .slicer-header { background: var(--dark-header); color: #fff; font-size: 9px; font-weight: 700; text-transform: uppercase; padding: 4px 8px; }
@@ -131,8 +193,6 @@
         .slicer-body { padding: 5px; display: flex; flex-wrap: wrap; gap: 3px; max-height: 85px; overflow-y: auto; flex-grow: 1; }
 
         .slicer-select { width: 100%; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 10px; padding: 3px; border-radius: 4px; font-weight: 600; color: #475569; outline: none; font-family: 'Cambria', serif; }
-        .btn-slicer { border: 1px solid #e2e8f0; background: #f8fafc; font-size: 9px; padding: 2px 6px; border-radius: 3px; color: #475569; font-weight: 600; transition: all 0.2s; font-family: 'Cambria', serif; }
-        .btn-slicer.active { background: var(--brand-blue) !important; color: #fff !important; border-color: var(--brand-blue) !important; }
 
         .summary-container { display: none; margin-top: 15px; width: 100%; gap: 12px; flex-wrap: wrap; }
         .summary-card { background: #fff; border-radius: 8px; border: 1px solid var(--border-color); padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
@@ -167,7 +227,7 @@
         .indent-1 { padding-left: 25px !important; }
         .indent-2 { padding-left: 50px !important; }
 
-        .table-container { background: #fff; border-radius: 0 6px 6px 6px; border: 1px solid var(--border-color); height: 500px; overflow: auto; position: relative; }
+        .table-container { background: #fff; border-radius: 6px; border: 1px solid var(--border-color); height: 500px; overflow: auto; position: relative; margin-top: 10px; }
         table.dataTable { table-layout: fixed !important; border-collapse: separate !important; border-spacing: 0 !important; width: 2470px !important; margin: 0 !important; }
         table.dataTable thead th { position: sticky !important; top: 0 !important; z-index: 1050 !important; background-color: var(--dark-header) !important; color: #fff !important; font-size: 10px; padding: 4px 5px !important; border-bottom: 2px solid #1e293b !important; border-right: 1px solid #475569 !important; vertical-align: middle; }
         table.dataTable tbody td { padding: 4px 8px !important; font-size: 11px; border: 1px solid #f1f5f9 !important; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; background-color: #fff; }
@@ -281,7 +341,14 @@
 <div class="container-fluid">
     <div class="sticky-controls">
         <div class="top-bar">
-            <h4>AURUM ANALYTICA DASHBOARD</h4>
+            <div class="top-bar-title-group">
+                <h4>AURUM ANALYTICA DASHBOARD</h4>
+                <!-- Blinking Date Badge with Indigo Theme -->
+                <div id="dataTillBadge" class="badge-data-till" style="display: none;">
+                    <span class="data-till-dot"></span>
+                    <span id="dataTillDateText">DATA TILL: --</span>
+                </div>
+            </div>
             <div class="action-group">
                 <button class="btn-whatsapp-small" onclick="captureAndSendTable()" title="Copy Full Table Photo">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/></svg>
@@ -324,21 +391,32 @@
         </div>
     </div>
 
+    <!-- Toolbar: Filters on the LEFT, Action Buttons on the RIGHT -->
     <div class="table-toolbar">
-        <button class="btn-toggle-table" onclick="toggleTableVisibility()" title="Hide or Unhide Table">
-            <span id="toggle-table-icon">−</span> HIDE/SHOW TABLE
-        </button>
-        <button class="btn-toggle-charts" onclick="toggleChartVisibility()" title="Hide or Unhide Charts">
-            <span id="toggle-chart-icon">−</span> HIDE/SHOW CHARTS
-        </button>
-        <button class="btn-download-table" onclick="downloadExcel()" title="Download Filtered Excel">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.10 0 1 0-.708.708l3 3z"/></svg>
-            DOWNLOAD TABLE
-        </button>
-        <div class="project-status-filter">
-            <span class="status-label">Project Status:</span>
-            <button id="btn-status-complete" class="btn btn-slicer" onclick="toggleProjectStatus('COMPLETE')">COMPLETE</button>
-            <button id="btn-status-pending" class="btn btn-slicer" onclick="toggleProjectStatus('PENDING')">PENDING</button>
+        <div class="toolbar-left">
+            <div class="project-status-filter">
+                <span class="status-label">Project Status:</span>
+                <button id="btn-status-complete" class="btn btn-slicer" onclick="toggleProjectStatus('COMPLETE')">COMPLETE</button>
+                <button id="btn-status-pending" class="btn btn-slicer" onclick="toggleProjectStatus('PENDING')">PENDING</button>
+            </div>
+            <div class="project-status-filter">
+                <span class="status-label">Campaign Type:</span>
+                <button id="btn-camp-all" class="btn btn-slicer active" onclick="toggleCampaignType('')">ALL</button>
+                <button id="btn-camp-branding" class="btn btn-slicer" onclick="toggleCampaignType('BRANDING')">BRANDING</button>
+                <button id="btn-camp-leadgen" class="btn btn-slicer" onclick="toggleCampaignType('LEADGEN')">LEADGEN</button>
+            </div>
+        </div>
+        <div class="toolbar-right">
+            <button class="btn-toggle-table" onclick="toggleTableVisibility()" title="Hide or Unhide Table">
+                <span id="toggle-table-icon">−</span> HIDE/SHOW TABLE
+            </button>
+            <button class="btn-toggle-charts" onclick="toggleChartVisibility()" title="Hide or Unhide Charts">
+                <span id="toggle-chart-icon">−</span> HIDE/SHOW CHARTS
+            </button>
+            <button class="btn-download-table" onclick="downloadExcel()" title="Download Filtered Excel">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.10 0 1 0-.708.708l3 3z"/></svg>
+                DOWNLOAD TABLE
+            </button>
         </div>
     </div>
 
@@ -450,7 +528,8 @@
 let table;
 let masterData = [];
 let projectStatusFilter = []; 
-// activeFilters: 6: Platform, 22: CPL Status, 23: Qual Status, 25: Spent Type, 26: User, 27: TL Name, 28: City, 31: Mkt Manager
+let selectedCampaignType = '';
+
 let activeFilters = { 6:'', 22:'', 23:'', 25:'', 26:'', 27:'', 28:'', 31:'' };
 
 let myGroupedChart = null;
@@ -466,7 +545,7 @@ const targetHeaders = [
     "QL TARGET", "LEADS QUALIFIED", "SV PROPOSED", "SV DONE", "TARGET CPL", 
     "CURRENT CPL", "QUALIFICAITON", "CPL STATUS", "QUALIFICATION STATUS", 
     "SPENDING ANALYSIS", "SPENT TYPE", "ASSIGNED USER", "TL NAME", "CITY", 
-    "MGR PHONE", "TL PHONE", "MKT MANAGER", "REMARKS"
+    "MGR PHONE", "TL PHONE", "MKT MANAGER", "REMARKS", "CAMPAIGN TYPE"
 ];
 
 const barLabelsPlugin = {
@@ -502,14 +581,52 @@ function toggleChartVisibility() {
 }
 
 $.fn.dataTable.ext.search.push(function(settings, data) {
-    if (projectStatusFilter.length === 0) return true;
-    let pendingLeads = parseFloat(data[13]) || 0;
-    let isComplete = (pendingLeads <= 0);
-    let isPending = (pendingLeads >= 1);
-    if (projectStatusFilter.includes('COMPLETE') && isComplete) return true;
-    if (projectStatusFilter.includes('PENDING') && isPending) return true;
-    return false;
+    if (projectStatusFilter.length > 0) {
+        let pendingLeads = parseFloat(data[13]) || 0;
+        let isComplete = (pendingLeads <= 0);
+        let isPending = (pendingLeads >= 1);
+        if (projectStatusFilter.includes('COMPLETE') && !isComplete && !projectStatusFilter.includes('PENDING')) return false;
+        if (projectStatusFilter.includes('PENDING') && !isPending && !projectStatusFilter.includes('COMPLETE')) return false;
+    }
+
+    if (selectedCampaignType) {
+        let campType = (data[33] || "").trim().toUpperCase();
+        if (campType !== selectedCampaignType) return false;
+    }
+
+    return true;
 });
+
+// Extract and display the "Till" date from the uploaded file name
+function updateDataTillBadge(filename) {
+    if (!filename) return;
+    // Match patterns like "Till 22-Sep", "till 22-09-2026", "till 22 Sep", etc.
+    const match = filename.match(/till\s+([0-9]{1,2}[-\s][A-Za-z0-9]+([-\s][0-9]{2,4})?)/i);
+    let extractedDate = "";
+    if (match && match[1]) {
+        extractedDate = match[1].trim();
+    } else {
+        // Fallback: look for standard date pattern
+        const generalMatch = filename.match(/([0-9]{1,2}[-\s][A-Za-z]{3,}([-\s][0-9]{2,4})?)/i);
+        if (generalMatch && generalMatch[1]) {
+            extractedDate = generalMatch[1].trim();
+        }
+    }
+
+    if (extractedDate) {
+        localStorage.setItem('dashboard_data_till', extractedDate);
+        displayDataTillBadge(extractedDate);
+    }
+}
+
+function displayDataTillBadge(dateText) {
+    if (dateText) {
+        $('#dataTillDateText').text(`DATA TILL: ${dateText.toUpperCase()}`);
+        $('#dataTillBadge').fadeIn(200);
+    } else {
+        $('#dataTillBadge').hide();
+    }
+}
 
 $(document).ready(function() {
     const headerHtml = targetHeaders.map((h, i) => {
@@ -526,7 +643,7 @@ $(document).ready(function() {
         "dom": 'frti', "paging": false, "ordering": true, "info": false, "autoWidth": false,
         "language": { "search": "", "searchPlaceholder": "Search..." },
         "columnDefs": [
-            { "targets": [25, 26, 27, 29, 30, 31], "visible": false },
+            { "targets": [25, 26, 27, 29, 30, 31, 33], "visible": false },
             { "targets": 0, "width": "35px" },
             { "targets": 1, "width": "40px" },
             { "targets": 2, "width": "65px", "className": "dt-center" },
@@ -632,6 +749,12 @@ $(document).ready(function() {
     });
 
     loadStoredData();
+    // Load previously saved date
+    const savedDate = localStorage.getItem('dashboard_data_till');
+    if (savedDate) {
+        displayDataTillBadge(savedDate);
+    }
+
     document.getElementById('excelUpload').addEventListener('change', handleFile, false);
 });
 
@@ -957,6 +1080,10 @@ function processData() {
         let spent = parseFloat(r[8]) || 0;
         let remaining = assigned - spent;
 
+        // Column AE is index 30 (0-indexed in JS array)
+        let rawAE = cleanVal(r[30]).toString().trim().toUpperCase();
+        let campType = rawAE.includes("FLCPL") ? "BRANDING" : "LEADGEN";
+
         return [
             "",              // 0: S. NO
             cleanVal(r[0]),  // 1: DRR
@@ -990,15 +1117,39 @@ function processData() {
             cleanVal(r[21]), // 29: MGR PHONE
             cleanVal(r[22]), // 30: TL PHONE
             cleanVal(r[24]), // 31: MKT MANAGER
-            cleanVal(r[28])  // 32: REMARKS
+            cleanVal(r[28]), // 32: REMARKS
+            campType         // 33: CAMPAIGN TYPE (BRANDING / LEADGEN from Col AE)
         ];
     }); 
     table.clear().rows.add(rows).draw();
     updateAllSlicers();
 }
 
-function loadStoredData() { const saved = localStorage.getItem('dashboard_data'); if (saved) { masterData = JSON.parse(saved); processData(); } }
-function handleFile(e) { const file = e.target.files[0]; const reader = new FileReader(); reader.onload = function(event) { const data = new Uint8Array(event.target.result); const workbook = XLSX.read(data, { type: 'array' }); masterData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 }); localStorage.setItem('dashboard_data', JSON.stringify(masterData)); processData(); }; reader.readAsArrayBuffer(file); }
+function loadStoredData() { 
+    const saved = localStorage.getItem('dashboard_data'); 
+    if (saved) { 
+        masterData = JSON.parse(saved); 
+        processData(); 
+    } 
+}
+
+function handleFile(e) { 
+    const file = e.target.files[0]; 
+    if (!file) return;
+
+    // Detect and show date from filename (e.g. Data For Upload Till 22-Sep.xlsx)
+    updateDataTillBadge(file.name);
+
+    const reader = new FileReader(); 
+    reader.onload = function(event) { 
+        const data = new Uint8Array(event.target.result); 
+        const workbook = XLSX.read(data, { type: 'array' }); 
+        masterData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 }); 
+        localStorage.setItem('dashboard_data', JSON.stringify(masterData)); 
+        processData(); 
+    }; 
+    reader.readAsArrayBuffer(file); 
+}
 
 function downloadExcel() {
     const visibleData = table.rows({ search: 'applied' }).data().toArray();
@@ -1034,7 +1185,20 @@ function toggleProjectStatus(type) {
     table.draw();
 }
 
-function clearData() { if(confirm("Clear data?")) { localStorage.clear(); location.reload(); } }
+function toggleCampaignType(type) {
+    selectedCampaignType = type;
+    $('#btn-camp-all').toggleClass('active', type === '');
+    $('#btn-camp-branding').toggleClass('active', type === 'BRANDING');
+    $('#btn-camp-leadgen').toggleClass('active', type === 'LEADGEN');
+    table.draw();
+}
+
+function clearData() { 
+    if(confirm("Clear data?")) { 
+        localStorage.clear(); 
+        location.reload(); 
+    } 
+}
 </script>
 </body>
 </html>
