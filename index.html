@@ -133,7 +133,7 @@
             align-items: center; 
             margin-bottom: 6px; 
             flex-wrap: wrap; 
-            gap: 10px;
+            gap: 10px; 
             background: #fff; 
             padding: 8px 12px; 
             border-radius: 8px; 
@@ -228,7 +228,7 @@
         .indent-2 { padding-left: 50px !important; }
 
         .table-container { background: #fff; border-radius: 6px; border: 1px solid var(--border-color); height: 500px; overflow: auto; position: relative; margin-top: 10px; }
-        table.dataTable { table-layout: fixed !important; border-collapse: separate !important; border-spacing: 0 !important; width: 2470px !important; margin: 0 !important; }
+        table.dataTable { table-layout: fixed !important; border-collapse: separate !important; border-spacing: 0 !important; width: 2570px !important; margin: 0 !important; }
         table.dataTable thead th { position: sticky !important; top: 0 !important; z-index: 1050 !important; background-color: var(--dark-header) !important; color: #fff !important; font-size: 10px; padding: 4px 5px !important; border-bottom: 2px solid #1e293b !important; border-right: 1px solid #475569 !important; vertical-align: middle; }
         table.dataTable tbody td { padding: 4px 8px !important; font-size: 11px; border: 1px solid #f1f5f9 !important; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; background-color: #fff; }
         
@@ -253,6 +253,7 @@
         .badge-pill { padding: 2px 4px; border-radius: 3px; font-size: 9px; font-weight: 700; display: inline-block; text-align: center; min-width: 60px; text-transform: uppercase; }
         .status-ok { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
         .status-high { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .status-nc { background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; }
         .qual-good { background: #166534; color: #fff; }
         .qual-ok { background: #dcfce7; color: #166534; }
         .qual-low { background: #ef4444; color: #fff; }
@@ -343,7 +344,6 @@
         <div class="top-bar">
             <div class="top-bar-title-group">
                 <h4>AURUM ANALYTICA DASHBOARD</h4>
-                <!-- Blinking Date Badge with Indigo Theme -->
                 <div id="dataTillBadge" class="badge-data-till" style="display: none;">
                     <span class="data-till-dot"></span>
                     <span id="dataTillDateText">DATA TILL: --</span>
@@ -371,7 +371,7 @@
                     <select id="select-tl" class="slicer-select" onchange="handleTLChange(this.value)">
                         <option value="">TL NAME</option>
                     </select>
-                    <select id="select-user" class="slicer-select" onchange="applySlicerFilter(26, this.value)">
+                    <select id="select-user" class="slicer-select" onchange="applySlicerFilter(27, this.value)">
                         <option value="">USER (FOS)</option>
                     </select>
                 </div>
@@ -383,7 +383,7 @@
             <div class="slicer-card">
                 <div class="slicer-header">City</div>
                 <div class="slicer-body" style="padding: 10px; justify-content: center;">
-                    <select id="select-city" class="slicer-select" onchange="applySlicerFilter(28, this.value)">
+                    <select id="select-city" class="slicer-select" onchange="applySlicerFilter(29, this.value)">
                         <option value="">ALL CITIES</option>
                     </select>
                 </div>
@@ -405,6 +405,17 @@
                 <button id="btn-camp-branding" class="btn btn-slicer" onclick="toggleCampaignType('BRANDING')">BRANDING</button>
                 <button id="btn-camp-leadgen" class="btn btn-slicer" onclick="toggleCampaignType('LEADGEN')">LEADGEN</button>
             </div>
+            <!-- Added: Dropdown for DRR Status Filter -->
+            <div class="project-status-filter">
+                <span class="status-label">DRR Status:</span>
+                <select id="select-drr-status" class="slicer-select" style="width: auto; min-width: 140px; padding: 2px 6px;" onchange="applyDRRStatusFilter(this.value)">
+                    <option value="">ALL DRR STATUS</option>
+                    <option value="DRR OK">DRR OK (GREEN)</option>
+                    <option value="DRR HIGH">DRR HIGH (RED)</option>
+                    <option value="MATCHED">MATCHED</option>
+                    <option value="NOT CALCULATED">NOT CALCULATED</option>
+                </select>
+            </div>
         </div>
         <div class="toolbar-right">
             <button class="btn-toggle-table" onclick="toggleTableVisibility()" title="Hide or Unhide Table">
@@ -414,7 +425,7 @@
                 <span id="toggle-chart-icon">−</span> HIDE/SHOW CHARTS
             </button>
             <button class="btn-download-table" onclick="downloadExcel()" title="Download Filtered Excel">
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.10 0 1 0-.708.708l3 3z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
                 DOWNLOAD TABLE
             </button>
         </div>
@@ -511,8 +522,7 @@
         <h6 class="modal-title" style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Remark History Log</h6>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="font-size: 10px;"></button>
       </div>
-      <div class="modal-body" id="historyBody">
-      </div>
+      <div class="modal-body" id="historyBody"></div>
     </div>
   </div>
 </div>
@@ -529,8 +539,9 @@ let table;
 let masterData = [];
 let projectStatusFilter = []; 
 let selectedCampaignType = '';
+let selectedDRRStatus = '';
 
-let activeFilters = { 6:'', 22:'', 23:'', 25:'', 26:'', 27:'', 28:'', 31:'' };
+let activeFilters = { 6:'', 22:'', 23:'', 25:'', 26:'', 27:'', 28:'', 29:'', 32:'' };
 
 let myGroupedChart = null;
 let cplPieChart = null;
@@ -544,7 +555,7 @@ const targetHeaders = [
     "CREDIT ASSIGNED FOR", "LEADS DELIVERED", "PENDING LEADS", "FEEDBACK RECEIVED", 
     "QL TARGET", "LEADS QUALIFIED", "SV PROPOSED", "SV DONE", "TARGET CPL", 
     "CURRENT CPL", "QUALIFICAITON", "CPL STATUS", "QUALIFICATION STATUS", 
-    "SPENDING ANALYSIS", "SPENT TYPE", "ASSIGNED USER", "TL NAME", "CITY", 
+    "SPENDING ANALYSIS", "DRR STATUS", "SPENT TYPE", "ASSIGNED USER", "TL NAME", "CITY", 
     "MGR PHONE", "TL PHONE", "MKT MANAGER", "REMARKS", "CAMPAIGN TYPE"
 ];
 
@@ -590,23 +601,25 @@ $.fn.dataTable.ext.search.push(function(settings, data) {
     }
 
     if (selectedCampaignType) {
-        let campType = (data[33] || "").trim().toUpperCase();
+        let campType = (data[34] || "").trim().toUpperCase();
         if (campType !== selectedCampaignType) return false;
+    }
+
+    if (selectedDRRStatus) {
+        let drrStatus = (data[25] || "").trim().toUpperCase();
+        if (drrStatus !== selectedDRRStatus) return false;
     }
 
     return true;
 });
 
-// Extract and display the "Till" date from the uploaded file name
 function updateDataTillBadge(filename) {
     if (!filename) return;
-    // Match patterns like "Till 22-Sep", "till 22-09-2026", "till 22 Sep", etc.
     const match = filename.match(/till\s+([0-9]{1,2}[-\s][A-Za-z0-9]+([-\s][0-9]{2,4})?)/i);
     let extractedDate = "";
     if (match && match[1]) {
         extractedDate = match[1].trim();
     } else {
-        // Fallback: look for standard date pattern
         const generalMatch = filename.match(/([0-9]{1,2}[-\s][A-Za-z]{3,}([-\s][0-9]{2,4})?)/i);
         if (generalMatch && generalMatch[1]) {
             extractedDate = generalMatch[1].trim();
@@ -630,7 +643,7 @@ function displayDataTillBadge(dateText) {
 
 $(document).ready(function() {
     const headerHtml = targetHeaders.map((h, i) => {
-        if (i === 32) {
+        if (i === 33) {
             return `<th style="min-width:180px;">${h} <button class="btn-google-sheet" onclick="sendToGoogleSheet()" title="Sync remarks to Sheet">🚀 SYNC</button></th>`;
         }
         return `<th>${h}</th>`;
@@ -643,7 +656,7 @@ $(document).ready(function() {
         "dom": 'frti', "paging": false, "ordering": true, "info": false, "autoWidth": false,
         "language": { "search": "", "searchPlaceholder": "Search..." },
         "columnDefs": [
-            { "targets": [25, 26, 27, 29, 30, 31, 33], "visible": false },
+            { "targets": [26, 27, 28, 30, 31, 32, 34], "visible": false },
             { "targets": 0, "width": "35px" },
             { "targets": 1, "width": "40px" },
             { "targets": 2, "width": "65px", "className": "dt-center" },
@@ -653,8 +666,8 @@ $(document).ready(function() {
             { "targets": 6, "width": "100px" },
             { "targets": [7, 12, 13, 15, 16, 17, 18, 19, 20], "className": "dt-center", "width": "60px" }, 
             { "targets": [8, 9, 10, 11, 14, 21, 22, 23], "className": "dt-center", "width": "85px" }, 
-            { "targets": 28, "width": "100px" },
-            { "targets": 32, "width": "220px", "orderable": false },
+            { "targets": 29, "width": "100px" },
+            { "targets": 33, "width": "220px", "orderable": false },
             { 
                 "targets": 24, "width": "75px", "className": "dt-center",
                 "render": function(data, type, row) {
@@ -667,11 +680,45 @@ $(document).ready(function() {
                     return status;
                 }
             },
+            { 
+                "targets": 25, "width": "80px", "className": "dt-center",
+                "render": function(data, type, row) {
+                    let drr = parseFloat(row[1]) || 0;
+                    let rdrr = parseFloat(row[2]) || 0;
+                    let status = "";
+                    let badgeClass = "";
+                    let dotClass = "";
+
+                    if (drr === 0 && rdrr === 0) {
+                        status = "NOT CALCULATED";
+                        badgeClass = "status-nc";
+                        dotClass = "";
+                    } else if (rdrr > drr) {
+                        status = "DRR HIGH";
+                        badgeClass = "status-high";
+                        dotClass = "dot-red";
+                    } else if (rdrr < drr) {
+                        status = "DRR OK";
+                        badgeClass = "status-ok";
+                        dotClass = "dot-green";
+                    } else {
+                        status = "MATCHED";
+                        badgeClass = "analysis-matched";
+                        dotClass = "dot-blue";
+                    }
+
+                    if (type === 'display') {
+                        let dotHtml = dotClass ? `<span class="dot ${dotClass}"></span>` : '';
+                        return `<span class="badge-pill ${badgeClass}">${dotHtml}${status}</span>`;
+                    }
+                    return status;
+                }
+            },
             {
-                "targets": 32,
+                "targets": 33,
                 "render": function(data, type, row) {
                     if (type === 'display') {
-                        let key = "rem_" + row[3] + "_" + (row[4] || "") + "_" + (row[5] || "") + "_" + (row[26] || "") + "_" + (row[6] || "");
+                        let key = "rem_" + row[3] + "_" + (row[4] || "") + "_" + (row[5] || "") + "_" + (row[27] || "") + "_" + (row[6] || "");
                         let savedVal = localStorage.getItem(key) || "";
                         let historyRaw = data ? data.toString().replace(/'/g, "\\'") : "";
                         
@@ -749,7 +796,6 @@ $(document).ready(function() {
     });
 
     loadStoredData();
-    // Load previously saved date
     const savedDate = localStorage.getItem('dashboard_data_till');
     if (savedDate) {
         displayDataTillBadge(savedDate);
@@ -786,7 +832,7 @@ function showLog(rawText) {
             const match = entry.match(regex);
             let datePart, remarkPart, statusPart;
             if (match) {
-                datePart = match[1]; remarkPart = match[2]; statusPart = match[3];   
+                datePart = match[1]; remarkPart = match[2]; statusPart = match[3];    
             } else {
                 datePart = "LOG"; remarkPart = entry; statusPart = "UPDATED";
             }
@@ -826,7 +872,7 @@ async function sendToGoogleSheet() {
     let currentDate = new Date().toLocaleDateString('en-IN'); 
 
     allRows.forEach(row => {
-        let key = "rem_" + row[3] + "_" + (row[4] || "") + "_" + (row[5] || "") + "_" + (row[26] || "") + "_" + (row[6] || "");
+        let key = "rem_" + row[3] + "_" + (row[4] || "") + "_" + (row[5] || "") + "_" + (row[27] || "") + "_" + (row[6] || "");
         let remark = localStorage.getItem(key);
         if (remark && remark.trim() !== "") {
             rowsToSend.push([ 
@@ -892,7 +938,7 @@ function refreshAllCharts() {
         const individualMetrics = document.getElementById('individual-mgr-metrics');
         const individualSpending = document.getElementById('individual-mgr-spending');
         const allManagersOverview = document.getElementById('all-managers-overview');
-        if (activeFilters[31]) { 
+        if (activeFilters[32]) { 
             individualMetrics.style.display = 'block'; individualSpending.style.display = 'block'; allManagersOverview.style.display = 'none';
             let totals = { projects: visibleData.length, unique: 0, budget: 0, spent: 0, rem: 0, ltarget: 0, ldeliver: 0, qtarget: 0, qdeliver: 0 };
             let analysis = { over: 0, under: 0 };
@@ -927,9 +973,9 @@ function refreshAllCharts() {
             individualMetrics.style.display = 'none'; individualSpending.style.display = 'none'; allManagersOverview.style.display = 'block';
             let tree = {};
             visibleData.forEach(row => {
-                let mgr = row[31] || "Unassigned"; 
-                let tl = row[27] || "No TL"; 
-                let fos = row[26] || "No FOS";
+                let mgr = row[32] || "Unassigned"; 
+                let tl = row[28] || "No TL"; 
+                let fos = row[27] || "No FOS";
                 if (!tree[mgr]) tree[mgr] = { m: initMetricObj(), tls: {} };
                 if (!tree[mgr].tls[tl]) tree[mgr].tls[tl] = { m: initMetricObj(), foss: {} };
                 if (!tree[mgr].tls[tl].foss[fos]) tree[mgr].tls[tl].foss[fos] = { m: initMetricObj() };
@@ -960,13 +1006,13 @@ function refreshAllCharts() {
     }
 
     const chartDataMap = {};
-    const citySelected = activeFilters[28];
+    const citySelected = activeFilters[29];
     const headerEl = document.getElementById('barChartHeader');
     if (citySelected) {
-        visibleData.forEach(row => { const fos = row[26] || "Unassigned"; chartDataMap[fos] = (chartDataMap[fos] || 0) + 1; });
+        visibleData.forEach(row => { const fos = row[27] || "Unassigned"; chartDataMap[fos] = (chartDataMap[fos] || 0) + 1; });
         headerEl.innerText = `FOS Distribution in ${citySelected}`;
     } else {
-        visibleData.forEach(row => { const city = row[28] || "Unknown"; chartDataMap[city] = (chartDataMap[city] || 0) + 1; });
+        visibleData.forEach(row => { const city = row[29] || "Unknown"; chartDataMap[city] = (chartDataMap[city] || 0) + 1; });
         headerEl.innerText = "City-wise Project Distribution";
     }
 
@@ -990,7 +1036,7 @@ function refreshAllCharts() {
     if (cplPieChart) cplPieChart.destroy();
     cplPieChart = new Chart(document.getElementById('cplPieChart').getContext('2d'), {
         type: 'pie',
-        data: { labels: cplLabels, datasets: [{ data: cplLabels.map(k => cplCounts[k]), backgroundColor: cplLabels.map(k => k === "OK" ? "#22c55e" : (k === "HIGH" ? "#ef4444" : "#94a3b8")) }] },
+        data: { labels: cplLabels, datasets: [{ data: cplLabels.map(k => cplCounts[k]), backgroundColor: cplLabels.map(k => k === "OK" ? "#3b82f6" : (k === "HIGH" ? "#ef4444" : "#94a3b8")) }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, datalabels: { color: '#fff', formatter: (value, ctx) => { let sum = 0; ctx.chart.data.datasets[0].data.map(data => { sum += data; }); return value + "\n(" + (value * 100 / sum).toFixed(1) + "%)"; } } } }
     });
 
@@ -1004,7 +1050,7 @@ function refreshAllCharts() {
     if (qualPieChart) qualPieChart.destroy();
     qualPieChart = new Chart(document.getElementById('qualPieChart').getContext('2d'), {
         type: 'pie',
-        data: { labels: activeQualLabels, datasets: [{ data: activeQualLabels.map(k => qualCounts[k]), backgroundColor: activeQualLabels.map(k => k === "GOOD" ? "#15803d" : (k === "OK" ? "#86efac" : (k === "LOW" ? "#ef4444" : "#94a3b8"))) }] },
+        data: { labels: activeQualLabels, datasets: [{ data: activeQualLabels.map(k => qualCounts[k]), backgroundColor: activeQualLabels.map(k => k === "GOOD" ? "#1d4ed8" : (k === "OK" ? "#93c5fd" : (k === "LOW" ? "#ef4444" : "#94a3b8"))) }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, datalabels: { color: (ctx) => (ctx.dataIndex === 1 && activeQualLabels[ctx.dataIndex] === "OK") ? "#1e293b" : "#fff", formatter: (value, ctx) => { let sum = 0; ctx.chart.data.datasets[0].data.map(data => { sum += data; }); return value + "\n(" + (value * 100 / sum).toFixed(1) + "%)"; } } } }
     });
 }
@@ -1039,9 +1085,14 @@ function renderPivotRow(name, d, type, id, parentId) {
     </tr>`;
 }
 
-function handleManagerChange(val) { activeFilters[31] = val; activeFilters[27] = ''; activeFilters[26] = ''; applySlicerFilter(31, val); }
-function handleTLChange(val) { activeFilters[26] = ''; applySlicerFilter(27, val); }
+function handleManagerChange(val) { activeFilters[32] = val; activeFilters[28] = ''; activeFilters[27] = ''; applySlicerFilter(32, val); }
+function handleTLChange(val) { activeFilters[27] = ''; applySlicerFilter(28, val); }
 function applySlicerFilter(colIdx, val) { activeFilters[colIdx] = val; const regexVal = val ? `^${val.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$` : ''; table.column(colIdx).search(regexVal, true, false).draw(); updateAllSlicers(); }
+
+function applyDRRStatusFilter(val) {
+    selectedDRRStatus = (val || "").trim().toUpperCase();
+    table.draw();
+}
 
 function updateDropdown(id, valueArray, currentVal, defaultTxt) { const sel = document.getElementById(id); let html = `<option value="">${defaultTxt}</option>`; valueArray.forEach(val => { html += `<option value="${val}" ${val === currentVal ? 'selected' : ''}>${val}</option>`; }); sel.innerHTML = html; }
 function updateButtonUI(containerId, colIdx, valueArray) { let html = `<button class="btn btn-slicer ${activeFilters[colIdx] === '' ? 'active' : ''}" onclick="applySlicerFilter(${colIdx}, '')">All</button>`; valueArray.forEach(val => { html += `<button class="btn btn-slicer ${activeFilters[colIdx] === val ? 'active' : ''}" onclick="applySlicerFilter(${colIdx}, '${val}')">${val}</button>`; }); document.getElementById(containerId).innerHTML = html; }
@@ -1062,14 +1113,14 @@ function getAvailableValues(colIdx, ignoreOwnFilter = true) {
 
 function updateAllSlicers() {
     const allRows = table.rows().data().toArray();
-    updateDropdown('select-manager', [...new Set(allRows.map(r => r[31]).filter(Boolean))].sort(), activeFilters[31], "MANAGER NAME");
-    updateDropdown('select-tl', getAvailableValues(27), activeFilters[27], "TL NAME");
-    updateDropdown('select-user', getAvailableValues(26), activeFilters[26], "USER (FOS)");
-    updateDropdown('select-city', getAvailableValues(28), activeFilters[28], "ALL CITIES");
+    updateDropdown('select-manager', [...new Set(allRows.map(r => r[32]).filter(Boolean))].sort(), activeFilters[32], "MANAGER NAME");
+    updateDropdown('select-tl', getAvailableValues(28), activeFilters[28], "TL NAME");
+    updateDropdown('select-user', getAvailableValues(27), activeFilters[27], "USER (FOS)");
+    updateDropdown('select-city', getAvailableValues(29), activeFilters[29], "ALL CITIES");
     updateButtonUI('filter-platform', 6, getAvailableValues(6));
     updateButtonUI('filter-cpl', 22, getAvailableValues(22));
     updateButtonUI('filter-qual', 23, getAvailableValues(23));
-    updateButtonUI('filter-spent', 25, getAvailableValues(25));
+    updateButtonUI('filter-spent', 26, getAvailableValues(26));
 }
 
 function processData() {
@@ -1080,12 +1131,26 @@ function processData() {
         let spent = parseFloat(r[8]) || 0;
         let remaining = assigned - spent;
 
+        let drr = parseFloat(r[0]) || 0;
+        let rdrr = parseFloat(r[29]) || 0;
+
+        let drrStatus = "";
+        if (drr === 0 && rdrr === 0) {
+            drrStatus = "NOT CALCULATED";
+        } else if (rdrr > drr) {
+            drrStatus = "DRR HIGH";
+        } else if (rdrr < drr) {
+            drrStatus = "DRR OK";
+        } else {
+            drrStatus = "MATCHED";
+        }
+
         // Column AE is index 30 (0-indexed in JS array)
         let rawAE = cleanVal(r[30]).toString().trim().toUpperCase();
         let campType = rawAE.includes("FLCPL") ? "BRANDING" : "LEADGEN";
 
         return [
-            "",              // 0: S. NO
+            "",          // 0: S. NO
             cleanVal(r[0]),  // 1: DRR
             cleanVal(r[29]), // 2: RDRR
             cleanVal(r[1]),  // 3: CAMPAIGN
@@ -1109,16 +1174,17 @@ function processData() {
             cleanVal(r[16]), // 21: QUALIFICATION
             cleanVal(r[5]),  // 22: CPL STATUS
             cleanVal(r[6]),  // 23: QUALIFICATION STATUS
-            "",              // 24: SPENDING ANALYSIS
-            cleanVal(r[17]), // 25: SPENT TYPE
-            cleanVal(r[18]), // 26: ASSIGNED USER
-            cleanVal(r[19]), // 27: TL NAME
-            cleanVal(r[23]), // 28: CITY
-            cleanVal(r[21]), // 29: MGR PHONE
-            cleanVal(r[22]), // 30: TL PHONE
-            cleanVal(r[24]), // 31: MKT MANAGER
-            cleanVal(r[28]), // 32: REMARKS
-            campType         // 33: CAMPAIGN TYPE (BRANDING / LEADGEN from Col AE)
+            "",          // 24: SPENDING ANALYSIS
+            drrStatus,       // 25: DRR STATUS (New Column)
+            cleanVal(r[17]), // 26: SPENT TYPE
+            cleanVal(r[18]), // 27: ASSIGNED USER
+            cleanVal(r[19]), // 28: TL NAME
+            cleanVal(r[23]), // 29: CITY
+            cleanVal(r[21]), // 30: MGR PHONE
+            cleanVal(r[22]), // 31: TL PHONE
+            cleanVal(r[24]), // 32: MKT MANAGER
+            cleanVal(r[28]), // 33: REMARKS
+            campType         // 34: CAMPAIGN TYPE (BRANDING / LEADGEN from Col AE)
         ];
     }); 
     table.clear().rows.add(rows).draw();
@@ -1137,7 +1203,6 @@ function handleFile(e) {
     const file = e.target.files[0]; 
     if (!file) return;
 
-    // Detect and show date from filename (e.g. Data For Upload Till 22-Sep.xlsx)
     updateDataTillBadge(file.name);
 
     const reader = new FileReader(); 
